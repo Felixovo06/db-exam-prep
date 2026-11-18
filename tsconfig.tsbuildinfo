@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/components/cheatsheet.tsx","./src/components/markdownview.tsx","./src/components/questioncard.tsx"],"version":"5.8.3"}
+{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/components/cheatsheet.tsx","./src/components/markdownview.tsx","./src/components/questioncard.tsx","./src/components/topicguide.tsx","./src/data/topics.ts"],"version":"5.8.3"}

@@ -15,6 +15,7 @@ import {
   Flame,
   CheckCircle2,
   AlertCircle,
+  BookOpenCheck,
 } from 'lucide-react';
 import rawDb from './data/db.json';
 import {
@@ -30,11 +31,12 @@ import {
 } from './types';
 import { QuestionCard } from './components/QuestionCard';
 import { CheatSheet } from './components/CheatSheet';
+import { TopicGuide } from './components/TopicGuide';
 
 const db = rawDb as { papers: Paper[]; questions: Question[] };
 const STORAGE_KEY = 'db_exam_prep_progress_v1';
 
-type StudyMode = 'chapter' | 'paper' | 'cheatsheet';
+type StudyMode = 'chapter' | 'paper' | 'topics' | 'cheatsheet';
 type SortMode = 'weight' | 'difficulty' | 'newest';
 type StatusFilter = 'all' | MasteryStatus | 'need_review';
 type ViewMode = 'focus' | 'list';
@@ -367,11 +369,13 @@ export function App() {
           </>
         )}
 
-        {mode === 'cheatsheet' && (
+        {(mode === 'cheatsheet' || mode === 'topics') && (
           <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
-            <div className="font-bold">正在浏览：0基础急救手册</div>
+            <div className="font-bold">
+              {mode === 'topics' ? '正在浏览：13大考点详解+例题' : '正在浏览：0基础急救手册'}
+            </div>
             <p className="text-amber-800 leading-relaxed">
-              看完 6 个核心套路后，切回「按考点章节」或「历年套卷」直接开刷！
+              看完套路与例题后，切回「按考点章节」或「历年套卷」直接刷全套真题！
             </p>
           </div>
         )}
@@ -467,6 +471,18 @@ export function App() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setMode('topics')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    mode === 'topics'
+                      ? 'bg-white text-indigo-700 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <BookOpenCheck className="w-3.5 h-3.5" />
+                  考点详解+例题
+                </button>
+                <button
+                  type="button"
                   onClick={() => setMode('cheatsheet')}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     mode === 'cheatsheet'
@@ -480,7 +496,7 @@ export function App() {
               </div>
             </div>
 
-            {mode !== 'cheatsheet' && (
+            {mode !== 'cheatsheet' && mode !== 'topics' && (
               <div className="flex items-center gap-2">
                 <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5 text-xs">
                   <button
@@ -513,6 +529,20 @@ export function App() {
         <main className="flex-1 px-4 sm:px-6 py-6">
           {mode === 'cheatsheet' ? (
             <CheatSheet />
+          ) : mode === 'topics' ? (
+            <TopicGuide
+              questions={db.questions}
+              paperMap={paperMap}
+              progress={progress}
+              onUpdateProgress={updateProgress}
+              onJumpToPractice={(chapter, keyword) => {
+                setSelectedChapter(chapter);
+                setSearchQuery(keyword ?? '');
+                setStatusFilter('all');
+                setQtypeFilter('all');
+                setMode('chapter');
+              }}
+            />
           ) : (
             <div className="max-w-5xl mx-auto space-y-5">
               {/* Context Banner */}
