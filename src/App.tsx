@@ -770,6 +770,14 @@ export function App() {
           )}
         </main>
       </div>
+      <div className="fixed bottom-2 right-3 text-[11px] text-slate-400 bg-white/80 rounded px-2 py-0.5 pointer-events-none">
+        <span id="busuanzi_container_site_uv" style={{ display: 'none' }}>
+          访客 <span id="busuanzi_value_site_uv" />
+        </span>
+        <span id="busuanzi_container_site_pv" style={{ display: 'none' }}>
+          {' · '}访问 <span id="busuanzi_value_site_pv" />
+        </span>
+      </div>
     </div>
   );
 }
