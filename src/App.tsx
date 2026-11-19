@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
+  RotateCw,
   Database,
   BookOpen,
   FileText,
@@ -77,6 +78,21 @@ export function App() {
     for (const p of db.papers) m[p.id] = p;
     return m;
   }, []);
+
+  // 重刷：清除指定题目的作答记录；resetNonce 变化会让题目卡片整体重建（清空选项、草稿、已展开的答案）
+  const [resetNonce, setResetNonce] = useState(0);
+  const redoQuestions = (ids: string[], label: string) => {
+    const done = ids.filter((id) => progress[id]).length;
+    if (!confirm(`确定重刷「${label}」吗？\n将清除这 ${ids.length} 道题中 ${done} 道已有的作答记录、草稿和掌握状态，可重新从头刷。\n建议先在左下角“导出备份”。`)) return;
+    setProgress((prev) => {
+      const next = { ...prev };
+      for (const id of ids) delete next[id];
+      return next;
+    });
+    setResetNonce((n) => n + 1);
+    setStatusFilter('all');
+    setFocusIdx(0);
+  };
 
   const updateProgress = (qid: string, update: Partial<UserProgressItem>) => {
     setProgress((prev) => ({
@@ -535,6 +551,8 @@ export function App() {
               paperMap={paperMap}
               progress={progress}
               onUpdateProgress={updateProgress}
+              resetNonce={resetNonce}
+              onRedo={redoQuestions}
               onJumpToPractice={(chapter, keyword) => {
                 setSelectedChapter(chapter);
                 setSearchQuery(keyword ?? '');
@@ -578,6 +596,43 @@ export function App() {
                     )}
                   </div>
                 )}
+
+                {(mode === 'chapter' || mode === 'paper') && (() => {
+                  const scopeQs = db.questions.filter((q) =>
+                    mode === 'chapter' ? q.chapter === selectedChapter : q.paper_id === selectedPaperId,
+                  );
+                  const scopeLabel = mode === 'chapter' ? currentChapterMeta?.shortName ?? '本章' : currentPaperMeta?.title ?? '本套卷';
+                  const reviewQs = scopeQs.filter((q) => {
+                    const st = progress[q.id]?.status;
+                    return st === 'wrong' || st === 'fuzzy';
+                  });
+                  const doneCount = scopeQs.filter((q) => progress[q.id]).length;
+                  return (
+                    <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                      <span className="text-slate-500">
+                        已刷 {doneCount}/{scopeQs.length}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={doneCount === 0}
+                        onClick={() => redoQuestions(scopeQs.map((q) => q.id), `${scopeLabel}（全部）`)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                      >
+                        <RotateCw className="w-3.5 h-3.5" />
+                        {mode === 'chapter' ? '重刷本章全部' : '重刷本套卷全部'}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={reviewQs.length === 0}
+                        onClick={() => redoQuestions(reviewQs.map((q) => q.id), `${scopeLabel}（错题与模糊题）`)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-semibold hover:bg-rose-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                      >
+                        <RotateCw className="w-3.5 h-3.5" />
+                        只重刷错题/模糊（{reviewQs.length}）
+                      </button>
+                    </div>
+                  );
+                })()}
 
                 {/* Filters Bar */}
                 <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2.5">
@@ -683,6 +738,7 @@ export function App() {
                   </div>
 
                   <QuestionCard
+                    key={`${filteredQuestions[focusIdx].id}-${resetNonce}`}
                     question={filteredQuestions[focusIdx]}
                     paper={paperMap[filteredQuestions[focusIdx].paper_id]}
                     progress={progress[filteredQuestions[focusIdx].id]}
@@ -700,7 +756,7 @@ export function App() {
                 <div className="space-y-5">
                   {filteredQuestions.map((q, idx) => (
                     <QuestionCard
-                      key={q.id}
+                      key={`${q.id}-${resetNonce}`}
                       question={q}
                       paper={paperMap[q.paper_id]}
                       progress={progress[q.id]}

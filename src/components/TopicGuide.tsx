@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Flame, ArrowRight, BookOpenCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { RotateCw, Flame, ArrowRight, BookOpenCheck, Sparkles, CheckCircle2 } from 'lucide-react';
 import { TOPIC_GUIDES, TopicGuideItem } from '../data/topics';
 import { Question, Paper, UserProgressItem, CHAPTERS } from '../types';
 import { MarkdownView } from './MarkdownView';
@@ -10,6 +10,8 @@ interface TopicGuideProps {
   paperMap: Record<string, Paper>;
   progress: Record<string, UserProgressItem>;
   onUpdateProgress: (qid: string, update: Partial<UserProgressItem>) => void;
+  resetNonce: number;
+  onRedo: (ids: string[], label: string) => void;
   onJumpToPractice: (chapter: TopicGuideItem['chapter'], keyword?: string) => void;
 }
 
@@ -24,6 +26,8 @@ export function TopicGuide({
   paperMap,
   progress,
   onUpdateProgress,
+  resetNonce,
+  onRedo,
   onJumpToPractice,
 }: TopicGuideProps) {
   const [selectedId, setSelectedId] = useState<string>(TOPIC_GUIDES[0].id);
@@ -34,6 +38,12 @@ export function TopicGuide({
     .filter((q): q is Question => !!q);
   const chapterMeta = CHAPTERS.find((c) => c.id === current.chapter);
 
+  const isRelated = (q: Question) => {
+    if (q.chapter !== current.chapter) return false;
+    if (!current.filterKeyword) return true;
+    return `${q.stem} ${q.topic_tag} ${q.answer}`.toLowerCase().includes(current.filterKeyword.toLowerCase());
+  };
+  const relatedIds = Array.from(new Set([...exampleQuestions.map((q) => q.id), ...(current.filterKeyword ? questions.filter(isRelated).map((q) => q.id) : [])]));
   const relatedCount = questions.filter((q) => {
     if (q.chapter !== current.chapter) return false;
     if (!current.filterKeyword) return true;
@@ -137,6 +147,14 @@ export function TopicGuide({
                 </div>
                 <button
                   type="button"
+                  onClick={() => onRedo(relatedIds, `${current.title}（例题与同类真题）`)}
+                  className="inline-flex items-center gap-1 text-xs text-rose-600 hover:text-rose-800 font-medium cursor-pointer"
+                >
+                  <RotateCw className="w-3 h-3" />
+                  重刷本考点
+                </button>
+                <button
+                  type="button"
                   onClick={() => onJumpToPractice(current.chapter, current.filterKeyword)}
                   className="text-xs text-indigo-600 hover:text-indigo-800 font-medium cursor-pointer"
                 >
@@ -146,7 +164,7 @@ export function TopicGuide({
 
               {exampleQuestions.map((q) => (
                 <QuestionCard
-                  key={q.id}
+                  key={`${q.id}-${resetNonce}`}
                   question={q}
                   paper={paperMap[q.paper_id]}
                   progress={progress[q.id]}
