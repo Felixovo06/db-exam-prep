@@ -113,3 +113,16 @@
 .md-content h4 { font-size: 0.95rem; font-weight: 700; margin: 1rem 0 0.35rem; color: #1e293b; }
 .md-content blockquote { margin: 0.6rem 0; padding: 0.4rem 0.9rem; border-left: 4px solid #f59e0b; background: #fffbeb; color: #78350f; border-radius: 0 0.4rem 0.4rem 0; }
 .qtree .katex { font-size: 1.1em; }
+
+/* ---- E-R 图 ---- */
+.erdiagram { overflow-x: auto; margin: 0.75rem 0; padding: 0.75rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; text-align: center; }
+.erdiagram svg { display: inline-block; }
+.er-line { stroke: #64748b; stroke-width: 1.4; }
+.er-entity { fill: #e0e7ff; stroke: #4f46e5; stroke-width: 1.8; }
+.er-rel { fill: #fef3c7; stroke: #d97706; stroke-width: 1.8; }
+.er-attr { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; }
+.er-text { fill: #0f172a; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+.er-name { font-size: 14px; font-weight: 700; }
+.er-small { font-size: 12px; }
+.er-pk { text-decoration: underline; font-weight: 700; }
+.er-card { font-size: 13px; font-weight: 700; fill: #be123c; }

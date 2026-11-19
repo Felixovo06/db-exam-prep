@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { marked, type TokenizerAndRendererExtension } from 'marked';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
+import { renderEr } from './erDiagram';
 
 /* ---------- KaTeX helpers ---------- */
 
@@ -94,6 +95,10 @@ marked.use({
   extensions: [mathBlock, mathInline],
   renderer: {
     code({ text, lang }) {
+      if (lang === 'er') {
+        const svg = renderEr(text);
+        if (svg) return svg;
+      }
       if (lang === 'tree') {
         const root = parseTree(text);
         if (root) return `<div class="qtree"><ul>${treeToHtml(root)}</ul></div>`;
