@@ -29,7 +29,9 @@ export function TopicGuide({
   const [selectedId, setSelectedId] = useState<string>(TOPIC_GUIDES[0].id);
 
   const current = TOPIC_GUIDES.find((t) => t.id === selectedId) ?? TOPIC_GUIDES[0];
-  const exampleQuestion = questions.find((q) => q.id === current.exampleQuestionId);
+  const exampleQuestions = [current.exampleQuestionId, ...(current.extraExampleIds ?? [])]
+    .map((id) => questions.find((q) => q.id === id))
+    .filter((q): q is Question => !!q);
   const chapterMeta = CHAPTERS.find((c) => c.id === current.chapter);
 
   const relatedCount = questions.filter((q) => {
@@ -126,12 +128,12 @@ export function TopicGuide({
           </div>
 
           {/* Real Past Exam Example */}
-          {exampleQuestion && (
+          {exampleQuestions.length > 0 && (
             <div className="space-y-2.5">
               <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-1.5 text-sm font-bold text-slate-900">
                   <Sparkles className="w-4 h-4 text-amber-500" />
-                  配套真题例题（可直接作答与对答案）
+                  配套真题例题（{exampleQuestions.length} 道，可直接作答与对答案）
                 </div>
                 <button
                   type="button"
@@ -142,12 +144,15 @@ export function TopicGuide({
                 </button>
               </div>
 
-              <QuestionCard
-                question={exampleQuestion}
-                paper={paperMap[exampleQuestion.paper_id]}
-                progress={progress[exampleQuestion.id]}
-                onUpdateProgress={onUpdateProgress}
-              />
+              {exampleQuestions.map((q) => (
+                <QuestionCard
+                  key={q.id}
+                  question={q}
+                  paper={paperMap[q.paper_id]}
+                  progress={progress[q.id]}
+                  onUpdateProgress={onUpdateProgress}
+                />
+              ))}
             </div>
           )}
         </div>

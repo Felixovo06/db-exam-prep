@@ -83,3 +83,33 @@
   color: #0f172a;
   font-weight: 600;
 }
+
+/* ---- math ---- */
+.md-content .katex { font-size: 1.05em; }
+.md-content .math-block { overflow-x: auto; padding: 0.4rem 0; text-align: center; }
+
+/* ---- 查询语法树 ---- */
+.qtree { overflow-x: auto; padding: 1rem 0.5rem; margin: 0.75rem 0; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; text-align: center; }
+.qtree ul { display: flex; justify-content: center; padding: 1.1rem 0 0; margin: 0; list-style: none; position: relative; }
+.qtree > ul { padding-top: 0; display: inline-flex; }
+.qtree li { list-style: none; position: relative; padding: 1.1rem 0.6rem 0; text-align: center; margin: 0; }
+.qtree > ul > li { padding-top: 0; }
+.qtree li::before, .qtree li::after { content: ''; position: absolute; top: 0; right: 50%; width: 50%; height: 1.1rem; border-top: 1.5px solid #64748b; }
+.qtree li::after { right: auto; left: 50%; border-left: 1.5px solid #64748b; }
+.qtree li:only-child::before, .qtree li:only-child::after { display: none; }
+.qtree li:only-child { padding-top: 0; }
+.qtree li:first-child::before, .qtree li:last-child::after { border: 0 none; }
+.qtree li:last-child::before { border-right: 1.5px solid #64748b; border-radius: 0 6px 0 0; }
+.qtree li:first-child::after { border-radius: 6px 0 0 0; }
+.qtree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 1.5px solid #64748b; height: 1.1rem; }
+.qtree > ul > li > ul { padding-top: 1.1rem; }
+.qtree .qt-node, .qtree .qt-leaf { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 0.4rem; background: white; border: 1px solid #cbd5e1; font-size: 0.9rem; white-space: nowrap; }
+.qtree .qt-leaf { background: #eef2ff; border-color: #c7d2fe; }
+
+.md-content details { margin: 0.75rem 0; padding: 0.5rem 0.9rem; border: 1px dashed #a5b4fc; border-radius: 0.6rem; background: #eef2ff; }
+.md-content details > summary { cursor: pointer; font-weight: 600; color: #3730a3; }
+.md-content details[open] > summary { margin-bottom: 0.4rem; }
+.md-content h3 { font-size: 1.05rem; font-weight: 700; margin: 1.4rem 0 0.5rem; color: #0f172a; padding-left: 0.6rem; border-left: 4px solid #6366f1; }
+.md-content h4 { font-size: 0.95rem; font-weight: 700; margin: 1rem 0 0.35rem; color: #1e293b; }
+.md-content blockquote { margin: 0.6rem 0; padding: 0.4rem 0.9rem; border-left: 4px solid #f59e0b; background: #fffbeb; color: #78350f; border-radius: 0 0.4rem 0.4rem 0; }
+.qtree .katex { font-size: 1.1em; }

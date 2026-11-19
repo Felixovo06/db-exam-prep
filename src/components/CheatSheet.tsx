@@ -1,3 +1,4 @@
+import { Tex } from './MarkdownView';
 import { BookOpen, Flame, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 export function CheatSheet() {
@@ -58,27 +59,27 @@ export function CheatSheet() {
             </thead>
             <tbody className="text-slate-700 text-xs">
               <tr>
-                <td className="p-2.5 border border-slate-200 font-mono font-semibold">σ_条件(R)</td>
+                <td className="p-2.5 border border-slate-200 font-semibold"><Tex t="\sigma_{\text{条件}}(R)" /></td>
                 <td className="p-2.5 border border-slate-200">选择（行筛选）</td>
                 <td className="p-2.5 border border-slate-200">挑<strong>行</strong>（相当于 SQL 的 <code>WHERE</code>）</td>
               </tr>
               <tr>
-                <td className="p-2.5 border border-slate-200 font-mono font-semibold">Π_列(R)</td>
+                <td className="p-2.5 border border-slate-200 font-semibold"><Tex t="\Pi_{\text{列}}(R)" /></td>
                 <td className="p-2.5 border border-slate-200">投影（列筛选）</td>
                 <td className="p-2.5 border border-slate-200">挑<strong>列</strong>并<strong>自动去重</strong>（相当于 SQL <code>SELECT DISTINCT</code>）</td>
               </tr>
               <tr>
-                <td className="p-2.5 border border-slate-200 font-mono font-semibold">R × S</td>
+                <td className="p-2.5 border border-slate-200 font-semibold"><Tex t="R\times S" /></td>
                 <td className="p-2.5 border border-slate-200">笛卡尔积</td>
                 <td className="p-2.5 border border-slate-200">R 的每行配 S 的每行；列数 = r + s，行数 = |R| × |S|</td>
               </tr>
               <tr>
-                <td className="p-2.5 border border-slate-200 font-mono font-semibold">R ⋈ S</td>
+                <td className="p-2.5 border border-slate-200 font-semibold"><Tex t="R\bowtie S" /></td>
                 <td className="p-2.5 border border-slate-200">自然连接</td>
                 <td className="p-2.5 border border-slate-200">找<strong>同名列值相等</strong>的行拼起来，并<strong>去掉重复的同名列</strong></td>
               </tr>
               <tr className="bg-amber-50/40">
-                <td className="p-2.5 border border-slate-200 font-mono font-semibold">R ÷ S</td>
+                <td className="p-2.5 border border-slate-200 font-semibold"><Tex t="R\div S" /></td>
                 <td className="p-2.5 border border-slate-200 font-bold text-amber-800">除法（必考！）</td>
                 <td className="p-2.5 border border-slate-200">
                   <strong>口诀</strong>：先找 R 有而 S 没有的列作为结果列（设为 X）；再看 S 在公共列上的所有取值，若某个 X 对应的公共列取值<strong>包含了 S 的全部行</strong>，则保留该 X！
