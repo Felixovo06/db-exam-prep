@@ -18,6 +18,7 @@ import {
   AlertCircle,
   BookOpenCheck,
   Newspaper,
+  ClipboardCheck,
 } from 'lucide-react';
 import rawDb from './data/db.json';
 import {
@@ -35,11 +36,12 @@ import { QuestionCard } from './components/QuestionCard';
 import { CheatSheet } from './components/CheatSheet';
 import { TopicGuide } from './components/TopicGuide';
 import { KnowledgeFeed } from './components/KnowledgeFeed';
+import { MockExam } from './components/MockExam';
 
 const db = rawDb as { papers: Paper[]; questions: Question[] };
 const STORAGE_KEY = 'db_exam_prep_progress_v1';
 
-type StudyMode = 'feed' | 'chapter' | 'paper' | 'topics' | 'cheatsheet';
+type StudyMode = 'feed' | 'chapter' | 'paper' | 'topics' | 'cheatsheet' | 'mock';
 type SortMode = 'weight' | 'difficulty' | 'newest';
 type StatusFilter = 'all' | MasteryStatus | 'need_review';
 type ViewMode = 'focus' | 'list';
@@ -279,7 +281,7 @@ export function App() {
             type="button"
             onClick={() => {
               setStatusFilter('need_review');
-              if (mode === 'cheatsheet' || mode === 'feed') setMode('chapter');
+              if (mode === 'cheatsheet' || mode === 'feed' || mode === 'mock') setMode('chapter');
               setSidebarOpen(false);
             }}
             className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer"
@@ -387,10 +389,10 @@ export function App() {
           </>
         )}
 
-        {(mode === 'cheatsheet' || mode === 'topics' || mode === 'feed') && (
+        {(mode === 'cheatsheet' || mode === 'topics' || mode === 'feed' || mode === 'mock') && (
           <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
             <div className="font-bold">
-              {mode === 'feed' ? '正在浏览：知识流' : mode === 'topics' ? '正在浏览：13大考点详解+例题' : '正在浏览：0基础急救手册'}
+              {mode === 'mock' ? '正在浏览：考前验收卷' : mode === 'feed' ? '正在浏览：知识流' : mode === 'topics' ? '正在浏览：13大考点详解+例题' : '正在浏览：0基础急救手册'}
             </div>
             <p className="text-amber-800 leading-relaxed">
               看完套路与例题后，切回「按考点章节」或「历年套卷」直接刷全套真题！
@@ -524,10 +526,22 @@ export function App() {
                   <Newspaper className="w-3.5 h-3.5" />
                   知识流
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('mock')}
+                  className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    mode === 'mock'
+                      ? 'bg-white text-indigo-700 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <ClipboardCheck className="w-3.5 h-3.5" />
+                  考前验收
+                </button>
               </div>
             </div>
 
-            {mode !== 'cheatsheet' && mode !== 'topics' && mode !== 'feed' && (
+            {mode !== 'cheatsheet' && mode !== 'topics' && mode !== 'feed' && mode !== 'mock' && (
               <div className="flex items-center gap-2">
                 <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5 text-xs">
                   <button
@@ -565,6 +579,8 @@ export function App() {
               progress={progress}
               onUpdateProgress={updateProgress}
             />
+          ) : mode === 'mock' ? (
+            <MockExam />
           ) : mode === 'cheatsheet' ? (
             <CheatSheet />
           ) : mode === 'topics' ? (

@@ -1,0 +1,1233 @@
+{
+ "exams": [
+  {
+   "id": "mock1",
+   "title": "考前验收卷（一）",
+   "subtitle": "重点：封锁协议 · 关系代数 · SQL子查询 · Chase 判无损 · E-R 转换",
+   "minutes": 120
+  },
+  {
+   "id": "mock2",
+   "title": "考前验收卷（二）",
+   "subtitle": "重点：权限与恢复 · 视图与分组 · 关系代数差运算 · 3NF/BCNF · 1:1 联系",
+   "minutes": 120
+  }
+ ],
+ "questions": [
+  {
+   "id": "mock1_101",
+   "paper_id": "mock1",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "1",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch6",
+   "topic_tag": "封锁协议与并发控制",
+   "difficulty": 2,
+   "context": "",
+   "stem": "关于并发控制，下列描述不正确的是（ ）",
+   "options": [
+    "A. 和操作系统一样，封锁的方法可能引起活锁和死锁",
+    "B. 若事务 T 对数据对象 R 加 X 锁，则其它事务只能再对 R 加 S 锁",
+    "C. 封锁粒度大，则系统开销大，并发度会降低",
+    "D. 二级封锁协议可以防止丢失修改和保证可重复读数据，但不能防止读“脏”数据"
+   ],
+   "correct_options": [
+    "B",
+    "C",
+    "D"
+   ],
+   "answer": "BCD",
+   "prereq_note": "【0基础前置速通】\n1. 两种基本锁：排他锁（X锁/写锁）与任何锁都不相容；共享锁（S锁/读锁）只与 S 锁相容。\n2. 封锁粒度：封锁对象越小（如元组级），并发度越高，但需要管理的锁越多、系统开销越大；封锁对象越大（如表级），并发度越低，系统开销越小。\n3. 三级封锁协议：\n- 一级：修改前加 X 锁至事务结束 → 防止丢失修改。\n- 二级：一级 + 读前加 S 锁，读完即释放 → 防止丢失修改 + 防止读“脏”数据（但不能保证可重复读）。\n- 三级：一级 + 读前加 S 锁至事务结束 → 防止丢失修改 + 防止读“脏”数据 + 保证可重复读。",
+   "explanation": "【分步解析】本题选“不正确”的选项：\n- A 正确（不选）：封锁技术确实可能产生活锁（先来先服务可解决）和死锁（预防或检测解除）。\n- B 不正确（应选）：X 锁是排他锁，一旦事务 T 对 R 加了 X 锁，其他事务对 R 既不能加 X 锁，也不能加 S 锁。\n- C 不正确（应选）：封锁粒度大（如整张表加锁），锁数量少，系统开销**小**（而不是大），同时并发度降低。\n- D 不正确（应选）：二级封锁协议读完即释放 S 锁，因此**能防止读“脏”数据，但不能保证可重复读**（选项把两者说反了）。\n综上，不正确的描述是 BCD。",
+   "src": "orig",
+   "frm": [
+    "2017秋A 一、不定项选择题 第2题"
+   ]
+  },
+  {
+   "id": "mock1_102",
+   "paper_id": "mock1",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "2",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch6",
+   "topic_tag": "二级封锁协议",
+   "difficulty": 2,
+   "context": "",
+   "stem": "关于并发控制中的封锁协议，二级封锁协议可以解决的问题有（ ）",
+   "options": [
+    "A. 丢失修改",
+    "B. 读“脏”数据",
+    "C. 不可重复读",
+    "D. 死锁"
+   ],
+   "correct_options": [
+    "A",
+    "B"
+   ],
+   "answer": "AB",
+   "prereq_note": "【0基础前置速通】口诀：一级防“丢”，二级防“丢+脏”，三级防“丢+脏+重复读”。区别全在“S 锁什么时候放”：二级读完就放，三级事务结束才放。",
+   "explanation": "【分步解析】封锁协议是逐级叠加的：\n- **一级**：修改前必须加 X 锁，事务结束才释放 → 防止**丢失修改**；\n- **二级**：在一级基础上，读前加 S 锁，**读完即可释放** → 再防止**读“脏”数据**；\n- **三级**：在一级基础上，读前加 S 锁，**事务结束才释放** → 再防止**不可重复读**。\n\n二级协议的 S 锁读完就放，别的事务随后可以改这条数据，所以防不住不可重复读（C 不选）。死锁是封锁本身带来的副作用，三级协议都解决不了，需要另行预防或检测（D 不选）。故选 AB。",
+   "src": "adapt",
+   "frm": [
+    "2017秋B 一、不定项选择题 第3题",
+    "2017秋A 一、不定项选择题 第2题"
+   ]
+  },
+  {
+   "id": "mock1_103",
+   "paper_id": "mock1",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "3",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch7",
+   "topic_tag": "SQL权限转授",
+   "difficulty": 1,
+   "context": "",
+   "stem": "在 SQL 的授权语句中使用 with grant option，表示（ ）。",
+   "options": [
+    "A. 所有的操作权限",
+    "B. 授权所有用户",
+    "C. 对所有的数据集合",
+    "D. 允许再授权"
+   ],
+   "correct_options": [
+    "D"
+   ],
+   "answer": "D",
+   "prereq_note": "【0基础前置速通】SQL 授权语法：GRANT <权限> ON <对象> TO <用户> [WITH GRANT OPTION]。若不带 WITH GRANT OPTION，被授权用户只能自己使用权限，不能转授他人；若带上该子句，则被授权用户还可以把该权限继续授予其他用户（但不能循环授权）。",
+   "explanation": "【分步解析】\n1. WITH GRANT OPTION 的含义是“允许将获得的权限再转授给其他用户”，对应 D。\n2. 干扰项辨析：“所有的操作权限”是 ALL PRIVILEGES（A）；“授权所有用户”是 TO PUBLIC（B）。\n\n【补充】`WITH GRANT OPTION` 表示被授权者可以把这个权限再授给别人；回收时要用 `REVOKE ... CASCADE` 级联收回。",
+   "src": "orig",
+   "frm": [
+    "2018春A 一、不定项选择题 第5题"
+   ]
+  },
+  {
+   "id": "mock1_104",
+   "paper_id": "mock1",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "4",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch2",
+   "topic_tag": "关系代数五种基本运算",
+   "difficulty": 1,
+   "context": "",
+   "stem": "下列关系代数运算中，属于五种基本运算（其余运算均可由它们导出）的是（ ）",
+   "options": [
+    "A. 交",
+    "B. 差",
+    "C. 自然连接",
+    "D. 笛卡尔积"
+   ],
+   "correct_options": [
+    "B",
+    "D"
+   ],
+   "answer": "BD",
+   "prereq_note": "【0基础前置速通】记“并差积选投”五个字。凡是“交、连接、除”都是为了写起来方便的导出运算。",
+   "explanation": "【分步解析】关系代数的**五种基本运算**是：并 $\\cup$、差 $-$、笛卡尔积 $\\times$、选择 $\\sigma$、投影 $\\Pi$。其余运算都能由它们组合出来：\n- 交：$R\\cap S = R-(R-S)$，所以 A 不是基本运算；\n- 自然连接：$R\\bowtie S=\\Pi(\\sigma(R\\times S))$，所以 C 不是基本运算；\n- 除法也可以由 $\\Pi$、$\\times$、$-$ 导出。\n\n故选 BD。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（关系代数基本运算）"
+   ]
+  },
+  {
+   "id": "mock1_105",
+   "paper_id": "mock1",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "5",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch4",
+   "topic_tag": "范式之间的关系",
+   "difficulty": 2,
+   "context": "",
+   "stem": "关于关系模式的规范化，下列说法正确的是（ ）",
+   "options": [
+    "A. 若 R∈BCNF，则 R 一定属于 3NF",
+    "B. 若 R∈3NF，则 R 一定属于 BCNF",
+    "C. 若 R 的所有属性都是主属性，则 R 至少属于 3NF",
+    "D. 任何只有两个属性的关系模式必属于 BCNF"
+   ],
+   "correct_options": [
+    "A",
+    "C",
+    "D"
+   ],
+   "answer": "ACD",
+   "prereq_note": "【0基础前置速通】3NF：非主属性不部分、不传递依赖于码。BCNF：每个函数依赖的决定因素都是码（比 3NF 多管了主属性）。",
+   "explanation": "【分步解析】\n- **A 对**：范式一层比一层严格，BCNF ⊂ 3NF ⊂ 2NF ⊂ 1NF。\n- **B 错**：3NF 不一定是 BCNF。例：$R(A,B,C)$，$F=\\{(A,C)\\to B,\\ B\\to C\\}$，候选码为 AC 和 AB，三个属性全是主属性，满足 3NF；但 $B\\to C$ 的决定因素 B 不是候选码，不满足 BCNF（即 2018春A 第9题的情形）。\n- **C 对**：没有非主属性，就不可能存在“非主属性对码的部分依赖和传递依赖”，所以至少是 3NF（即 2018春B 第7题的结论）。\n- **D 对**：二元模式 $R(A,B)$ 只有几种情形：无依赖、$A\\to B$、$B\\to A$、互相依赖，每种情形下决定因素都含候选码，故必属 BCNF。\n\n故选 ACD。",
+   "src": "adapt",
+   "frm": [
+    "2018春B 二、填空题 第2题",
+    "2018_spring_A_9"
+   ]
+  },
+  {
+   "id": "mock1_201",
+   "paper_id": "mock1",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "1",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch6",
+   "topic_tag": "两段锁协议2PL",
+   "difficulty": 1,
+   "context": "",
+   "stem": "事务遵守_________是可串行化调度的充分条件。",
+   "options": [],
+   "correct_options": [],
+   "answer": "两段锁协议",
+   "prereq_note": "【0基础前置速通】两段锁协议（Two-Phase Locking, 2PL）指所有事务必须分两个阶段对数据项加锁和解锁：\n1. 扩展阶段：只能获得锁，不能释放任何锁；\n2. 收缩阶段：只能释放锁，不能再申请任何锁。\n定理：所有事务遵守两段锁协议，是并发调度（冲突）可串行化的充分条件，但不是必要条件。",
+   "explanation": "【分步解析】\n直接考查教材核心定理：若并发执行的所有事务均遵守两段锁协议（2PL），则对这些事务的任何并发调度策略都是可串行化的。\n常见陷阱：注意它是“充分条件”而非“充要条件”——存在不遵守 2PL 但仍然可串行化的调度。\n\n【辨析】两段锁 ⇒ 可串行化（**充分**）；可串行化 ⇏ 两段锁；两段锁不能避免死锁。",
+   "src": "orig",
+   "frm": [
+    "2018春B 二、填空题 第4题"
+   ]
+  },
+  {
+   "id": "mock1_202",
+   "paper_id": "mock1",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "2",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch6",
+   "topic_tag": "并发不一致三类问题",
+   "difficulty": 1,
+   "context": "",
+   "stem": "并发操作带来的数据不一致性包括：丢失修改、读“脏”数据和______。",
+   "options": [],
+   "correct_options": [],
+   "answer": "不可重复读",
+   "prereq_note": "【0基础前置速通】三类问题对应三级封锁协议：一级防丢失修改，二级再防读脏，三级再防不可重复读。",
+   "explanation": "【分步解析】并发操作带来的三类数据不一致：**丢失修改**（两个事务改同一数据，后一个覆盖前一个）、**读“脏”数据**（读到了别的事务尚未提交、随后又回滚的数据）、**不可重复读**（同一事务两次读同一数据，结果不一致）。第三类即不可重复读。",
+   "src": "adapt",
+   "frm": [
+    "2020_spring_A_9"
+   ]
+  },
+  {
+   "id": "mock1_203",
+   "paper_id": "mock1",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "3",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch7",
+   "topic_tag": "GRANT转授权",
+   "difficulty": 2,
+   "context": "",
+   "stem": "将查询基本表 Student 的权限授予用户 Lucy，并且允许她将该权限继续授予其他用户，实现此功能的 SQL 语句是______。",
+   "options": [],
+   "correct_options": [],
+   "answer": "GRANT SELECT ON TABLE Student TO Lucy WITH GRANT OPTION;",
+   "prereq_note": "【0基础前置速通】GRANT 授权、REVOKE 收回权限；加 `WITH GRANT OPTION` 表示被授权者还能把权限转授给别人。",
+   "explanation": "【分步解析】授权语句格式为 `GRANT 权限 ON 对象 TO 用户 [WITH GRANT OPTION]`。权限是查询，用 `SELECT`；对象是表 `Student`；“允许再授权”靠末尾的 `WITH GRANT OPTION`，不加则不允许转授（2018春B 第8题就是不加的情形）。`ON TABLE` 里的 `TABLE` 可以省略。",
+   "src": "adapt",
+   "frm": [
+    "2018春B 二、填空题 第3题",
+    "2017秋A 一、不定项选择题 第3题"
+   ]
+  },
+  {
+   "id": "mock1_204",
+   "paper_id": "mock1",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "4",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch2",
+   "topic_tag": "关系完整性三类约束",
+   "difficulty": 1,
+   "context": "",
+   "stem": "关系模型的三类完整性约束是实体完整性、______和用户定义的完整性。",
+   "options": [],
+   "correct_options": [],
+   "answer": "参照完整性",
+   "prereq_note": "【0基础前置速通】实体完整性管“主码”，参照完整性管“外码”。",
+   "explanation": "【分步解析】关系模型的三类完整性：**实体完整性**（主码不能为空、不能重复）、**参照完整性**（外码要么为空，要么等于被参照关系中某个主码值）、**用户定义的完整性**（针对具体应用的语义约束，如“成绩在 0 到 100 之间”）。其中前两类是关系模型必须满足的。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（关系模型完整性）"
+   ]
+  },
+  {
+   "id": "mock1_205",
+   "paper_id": "mock1",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "5",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch5",
+   "topic_tag": "数据库设计阶段",
+   "difficulty": 1,
+   "context": "",
+   "stem": "数据库设计的六个阶段依次是：需求分析、概念结构设计、______、物理结构设计、数据库实施、数据库运行与维护。",
+   "options": [],
+   "correct_options": [],
+   "answer": "逻辑结构设计",
+   "prereq_note": "【0基础前置速通】概念设计画 E-R 图，逻辑设计转关系模式，物理设计管怎么存。",
+   "explanation": "【分步解析】按顺序：需求分析 → 概念结构设计（画 E-R 图）→ **逻辑结构设计**（E-R 图转为关系模式并优化）→ 物理结构设计（选存储结构和存取方法）→ 数据库实施 → 运行与维护。2023秋 第9题问的“E-R 图转换成关系数据模型属于哪个阶段”，答案也是逻辑结构设计。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（数据库设计六阶段）",
+    "2023秋 二、填空题 第4题"
+   ]
+  },
+  {
+   "id": "mock1_301",
+   "paper_id": "mock1",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "1",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "关系代数选择与并",
+   "difficulty": 1,
+   "context": "已知关系 R、S、T 如下：\n\n**R 表**\n| A | B | C |\n|---|---|---|\n| A1 | B1 | C1 |\n| A2 | B2 | C2 |\n| A3 | B3 | C2 |\n| A3 | B2 | C1 |\n\n**S 表**\n| A | B | C |\n|---|---|---|\n| A1 | B3 | C3 |\n| A2 | B2 | C2 |\n| A3 | B3 | C2 |\n\n**T 表**\n| B | C | D |\n|---|---|---|\n| B1 | C1 | D2 |\n| B2 | C2 | D1 |\n| B3 | C3 | D1 |\n| B3 | C2 | D1 |",
+   "stem": "求解以下关系代数表达式的结果：\n$\\sigma _{A=\\text{'A3'}}(R) \\cup S$",
+   "options": [],
+   "correct_options": [],
+   "answer": "| A | B | C |\n|---|---|---|\n| A1 | B3 | C3 |\n| A2 | B2 | C2 |\n| A3 | B3 | C2 |\n| A3 | B2 | C1 |",
+   "prereq_note": "【0基础前置速通】\n1. 选择运算 $\\sigma _{F}(R)$：从关系 R 中挑选出满足条件 F 的行（元组），列（属性）不变。\n2. 并运算 $R \\cup S$：要求 R 和 S 具有相同的属性列（目数和域相同），把两张表的行合并在一起，并【自动去除完全重复的行】。",
+   "explanation": "【分步解析】\n1. 先计算 $\\sigma _{A=\\text{'A3'}}(R)$：从 R 表中选出 A 列等于 'A3' 的行，得到：\n   (A3, B3, C2)、(A3, B2, C1)。\n2. 再与 S 表求并集（S 表有 (A1, B3, C3)、(A2, B2, C2)、(A3, B3, C2)）。\n3. 合并去重：其中 (A3, B3, C2) 在两边都出现，只保留一次，最终得到 4 行：\n   (A1, B3, C3)、(A2, B2, C2)、(A3, B3, C2)、(A3, B2, C1)。",
+   "src": "orig",
+   "frm": [
+    "2020春A 三、简单应用题 第1题"
+   ]
+  },
+  {
+   "id": "mock1_302",
+   "paper_id": "mock1",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "2",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "关系代数交与投影",
+   "difficulty": 1,
+   "context": "已知关系 R、S、T 如下：\n\n**R 表**\n| A | B | C |\n|---|---|---|\n| A1 | B1 | C1 |\n| A2 | B2 | C2 |\n| A3 | B3 | C2 |\n| A3 | B2 | C1 |\n\n**S 表**\n| A | B | C |\n|---|---|---|\n| A1 | B3 | C3 |\n| A2 | B2 | C2 |\n| A3 | B3 | C2 |\n\n**T 表**\n| B | C | D |\n|---|---|---|\n| B1 | C1 | D2 |\n| B2 | C2 | D1 |\n| B3 | C3 | D1 |\n| B3 | C2 | D1 |",
+   "stem": "求解以下关系代数表达式的结果：\n$\\Pi _{A,\\,B}(R \\cap S)$",
+   "options": [],
+   "correct_options": [],
+   "answer": "| A | B |\n|---|---|\n| A2 | B2 |\n| A3 | B3 |",
+   "prereq_note": "【0基础前置速通】\n1. 交运算 $R \\cap S$：要求 R 和 S 结构相同，找出【同时出现在 R 和 S 中】的整行元组。\n2. 投影运算 $\\Pi _{A,\\,B}$：仅保留 A、B 两列，并去除重复行。",
+   "explanation": "【分步解析】\n1. 逐行比对 R 和 S，同时存在于两张表的元组有：\n   (A2, B2, C2) 和 (A3, B3, C2)。\n   注意：R 中的 (A3, B2, C1) 和 (A1, B1, C1) 均不在 S 中。\n2. 对 $R \\cap S$ 投影到 (A, B) 列，得：\n   (A2, B2) 和 (A3, B3)。\n3. 要点回顾：交运算要求两个关系**同构**（属性相同），结果元组必须在 R 和 S 中**整行完全相同**。比较时要看三列 $(A,B,C)$ 全相同，而不是只看 $(A,B)$；先交后投影与先投影后交结果可能不同（先投影再交会把 $(A3,B2)$ 之类“部分相同”的元组也算进去），不能随意交换顺序。",
+   "src": "orig",
+   "frm": [
+    "2020春A 三、简单应用题 第5题"
+   ]
+  },
+  {
+   "id": "mock1_303",
+   "paper_id": "mock1",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "3",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "关系代数自然连接",
+   "difficulty": 1,
+   "context": "已知关系 R、S、T 如下：\n\n**R 表**\n| A | B | C |\n|---|---|---|\n| A1 | B1 | C1 |\n| A2 | B2 | C2 |\n| A3 | B3 | C2 |\n| A3 | B2 | C1 |\n\n**S 表**\n| A | B | C |\n|---|---|---|\n| A1 | B3 | C3 |\n| A2 | B2 | C2 |\n| A3 | B3 | C2 |\n\n**T 表**\n| B | C | D |\n|---|---|---|\n| B1 | C1 | D2 |\n| B2 | C2 | D1 |\n| B3 | C3 | D1 |\n| B3 | C2 | D1 |",
+   "stem": "求解以下关系代数表达式的结果：\n$R \\bowtie T$",
+   "options": [],
+   "correct_options": [],
+   "answer": "| A | B | C | D |\n|---|---|---|---|\n| A1 | B1 | C1 | D2 |\n| A2 | B2 | C2 | D1 |\n| A3 | B3 | C2 | D1 |",
+   "prereq_note": "【0基础前置速通】自然连接 $R\\bowtie T$：找同名列，同名列全部相等才拼接，结果里同名列只留一份。",
+   "explanation": "【分步解析】\n1. R(A,B,C) 与 T(B,C,D) 的公共属性是 (B, C)，结果属性为 (A, B, C, D)。\n2. 逐行在 T 中找 (B, C) 完全相同的元组：\n   - R 第 1 行 (A1, B1, C1) ↔ T 的 (B1, C1, D2) → (A1, B1, C1, D2)；\n   - R 第 2 行 (A2, B2, C2) ↔ T 的 (B2, C2, D1) → (A2, B2, C2, D1)；\n   - R 第 3 行 (A3, B3, C2) ↔ T 的 (B3, C2, D1) → (A3, B3, C2, D1)；\n   - R 第 4 行 (A3, B2, C1)：T 中没有 (B2, C1)，不产生结果。\n3. 共 3 行。\n\n常见陷阱：只按 B 一列匹配（会多出错误的行）。自然连接要求**所有同名列**都相等。",
+   "src": "adapt",
+   "frm": [
+    "2020春A 三、简单应用题 第2题"
+   ]
+  },
+  {
+   "id": "mock1_304",
+   "paper_id": "mock1",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "4",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "投影与差运算",
+   "difficulty": 1,
+   "context": "已知关系 R、S、T 如下：\n\n**R 表**\n| A | B | C |\n|---|---|---|\n| A1 | B1 | C1 |\n| A2 | B2 | C2 |\n| A3 | B3 | C2 |\n| A3 | B2 | C1 |\n\n**S 表**\n| A | B | C |\n|---|---|---|\n| A1 | B3 | C3 |\n| A2 | B2 | C2 |\n| A3 | B3 | C2 |\n\n**T 表**\n| B | C | D |\n|---|---|---|\n| B1 | C1 | D2 |\n| B2 | C2 | D1 |\n| B3 | C3 | D1 |\n| B3 | C2 | D1 |",
+   "stem": "求解以下关系代数表达式的结果：\n$\\Pi_{B,\\,C}(R) - \\Pi_{B,\\,C}(S)$",
+   "options": [],
+   "correct_options": [],
+   "answer": "| B | C |\n|---|---|\n| B1 | C1 |\n| B2 | C1 |",
+   "prereq_note": "【0基础前置速通】差 $R-S$：属于 R 且不属于 S 的元组。并、交、差要求两个关系“列数相同、对应列类型相同”（相容）。",
+   "explanation": "【分步解析】\n1. $\\Pi_{B,C}(R)=\\{(B1,C1),\\,(B2,C2),\\,(B3,C2),\\,(B2,C1)\\}$；\n2. $\\Pi_{B,C}(S)=\\{(B3,C3),\\,(B2,C2),\\,(B3,C2)\\}$；\n3. 差运算：保留在前者中出现、后者中没有的元组。(B2,C2) 与 (B3,C2) 在后者中出现，被删除；剩下 (B1,C1) 和 (B2,C1)。\n\n常见陷阱：忘记先投影就直接做差（R、S 的三列元组并不相同，会得出错误结果）；差运算不满足交换律，别把 R、S 顺序弄反。",
+   "src": "adapt",
+   "frm": [
+    "2023秋 三、简单应用题 第5题",
+    "2018春A 三、计算题 第(5)题"
+   ]
+  },
+  {
+   "id": "mock1_305",
+   "paper_id": "mock1",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "5",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "关系除法",
+   "difficulty": 2,
+   "context": "已知关系 P、Q 如下：\n\n**P 表**\n| A | B |\n|---|---|\n| a1 | b1 |\n| a1 | b2 |\n| a1 | b3 |\n| a2 | b1 |\n| a2 | b3 |\n| a3 | b2 |\n| a3 | b3 |\n| a4 | b1 |\n\n**Q 表**\n| B |\n|---|\n| b1 |\n| b3 |",
+   "stem": "求解以下关系代数表达式的结果：\n$P \\div Q$",
+   "options": [],
+   "correct_options": [],
+   "answer": "| A |\n|---|\n| a1 |\n| a2 |",
+   "prereq_note": "【0基础前置速通】除法口诀：对每个 A 值，找它搭配的所有 B（像集），像集把除数 Q 全部包住，这个 A 才进结果。",
+   "explanation": "【分步解析】除法 $P\\div Q$ 的结果属性是 P 中去掉 Q 的属性后剩下的 A。做法是看每个 A 值的“像集”（与它搭配的 B 值集合）是否**包含** Q 的全部 B 值 {b1, b3}：\n- a1 的像集 {b1, b2, b3} ⊇ {b1, b3} → 保留；\n- a2 的像集 {b1, b3} ⊇ {b1, b3} → 保留；\n- a3 的像集 {b2, b3}，缺 b1 → 淘汰；\n- a4 的像集 {b1}，缺 b3 → 淘汰。\n\n结果为 {a1, a2}。\n\n常见陷阱：只要“有一个 B 值相同”就保留。除法要求**包含全部**，用于表达“所有 / 至少……都”的查询。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（关系除法）",
+    "2020春A 三、简单应用题 第3题"
+   ]
+  },
+  {
+   "id": "mock1_401",
+   "paper_id": "mock1",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "1",
+   "qtype": "sql",
+   "points": 5,
+   "chapter": "ch3",
+   "topic_tag": "SQL条件更新",
+   "difficulty": 2,
+   "context": "已知关系模型：\n- Student(Sno, Sname, Sage, Ssex, Dept)\n- Course(Cno, Cname, Ccredit, Tname)\n- SC(Sno, Cno, Grade)",
+   "stem": "（SQL）将选修机器学习课程的女生成绩均提高 5 分",
+   "options": [],
+   "correct_options": [],
+   "answer": "```sql\nUPDATE SC\nSET Grade = Grade + 5\nWHERE Cno IN (\n    SELECT Cno\n    FROM Course\n    WHERE Cname = '机器学习'\n)\nAND Sno IN (\n    SELECT Sno\n    FROM Student\n    WHERE Ssex = '女'\n);\n```",
+   "prereq_note": "【0基础前置速通】SQL 更新语法为 `UPDATE 表名 SET 列名 = 表达式 WHERE 条件`。当修改条件涉及其他表（如 Course 中的课程名、Student 中的性别）时，标准 ANSI SQL 常在 WHERE 子句中使用 `IN (SELECT ...)` 子查询来定位目标记录。",
+   "explanation": "【分步解析】\n1. 成绩 Grade 存放在 SC 表中，因此更新对象是 `UPDATE SC`，修改动作是 `SET Grade = Grade + 5`。\n2. 限制条件有两个：“选修机器学习课程”（通过 Course 表找到 `Cname = '机器学习'` 对应的 Cno）且“女生”（通过 Student 表找到 `Ssex = '女'` 对应的 Sno）。\n3. 用 `AND` 连接两个 `IN` 子查询即可。注意：也可以把 `Cno IN (...)` 写成 `Cno = (...)`（若课程名唯一），但用 `IN` 更稳妥，不会因多门同名课程而报错。",
+   "src": "orig",
+   "frm": [
+    "2023秋 四、应用题 第1题"
+   ]
+  },
+  {
+   "id": "mock1_402",
+   "paper_id": "mock1",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "2",
+   "qtype": "sql",
+   "points": 5,
+   "chapter": "ch3",
+   "topic_tag": "ALL量词子查询",
+   "difficulty": 2,
+   "context": "已知学生选课数据库的关系模式：\n- Student(Sno, Sname, Sage, Ssex, Dept)：学号、姓名、年龄、性别、所在学院；\n- Course(Cno, Cname, Ccredit, Tname)：课程号、课程名、学分、任课教师；\n- SC(Sno, Cno, Grade)：学号、课程号、成绩。",
+   "stem": "查询比所有选修了“数据库”课程的学生年龄都大的学生姓名和年龄。（SQL）",
+   "options": [],
+   "correct_options": [],
+   "answer": "```sql\nSELECT Sname, Sage\nFROM Student\nWHERE Sage > ALL (\n    SELECT Sage\n    FROM Student\n    WHERE Sno IN (\n        SELECT Sno\n        FROM SC\n        WHERE Cno IN (\n            SELECT Cno\n            FROM Course\n            WHERE Cname = '数据库'\n        )\n    )\n);\n```",
+   "prereq_note": "【0基础前置速通】`> ALL (子查询)`：比子查询结果里的每一个值都大；`> ANY (子查询)`：比其中至少一个值大。",
+   "explanation": "【解题思路】\n1. “比所有……都大”对应 `> ALL (子查询)`，子查询要给出**选修了“数据库”课程的所有学生的年龄**。\n2. 子查询由内到外三层：`Course` 找出“数据库”的课程号 → `SC` 找出选修这些课程的学号 → `Student` 取这些学生的年龄。\n3. 外层再从 `Student` 里选出年龄大于该集合中每个值的学生，输出姓名和年龄。\n\n等价写法：`Sage > (SELECT MAX(Sage) ...)`，把 `ALL` 换成最大值比较。\n\n【易错点】`ALL` 要放在比较运算符后面（`> ALL`），不能写成 `ALL >`；写成 `> ANY` 就变成“比其中某一个大”，含义完全不同。",
+   "src": "adapt",
+   "frm": [
+    "2023秋 四、应用题 第2题"
+   ]
+  },
+  {
+   "id": "mock1_403",
+   "paper_id": "mock1",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "3",
+   "qtype": "sql",
+   "points": 5,
+   "chapter": "ch3",
+   "topic_tag": "GROUP BY与HAVING",
+   "difficulty": 2,
+   "context": "已知学生选课数据库的关系模式：\n- Student(Sno, Sname, Sage, Ssex, Dept)：学号、姓名、年龄、性别、所在学院；\n- Course(Cno, Cname, Ccredit, Tname)：课程号、课程名、学分、任课教师；\n- SC(Sno, Cno, Grade)：学号、课程号、成绩。",
+   "stem": "查询选修了 3 门以上（不含 3 门）课程且平均成绩不低于 80 分的学生的学号、姓名和平均成绩。（SQL）",
+   "options": [],
+   "correct_options": [],
+   "answer": "```sql\nSELECT Student.Sno, Sname, AVG(Grade)\nFROM Student, SC\nWHERE Student.Sno = SC.Sno\nGROUP BY Student.Sno, Sname\nHAVING COUNT(*) > 3 AND AVG(Grade) >= 80;\n```",
+   "prereq_note": "【0基础前置速通】WHERE 过滤“行”（分组之前），HAVING 过滤“组”（分组之后，可用聚合函数）。",
+   "explanation": "【解题思路】\n1. 学号、姓名在 `Student`，成绩在 `SC`，所以先做等值连接 `Student.Sno = SC.Sno`。\n2. 按学生分组：`GROUP BY Student.Sno, Sname`（SELECT 里出现的非聚合列都必须出现在 GROUP BY 中）。\n3. 对“组”的条件必须用 `HAVING`：选课门数 `COUNT(*) > 3`，平均成绩 `AVG(Grade) >= 80`，两个条件用 `AND` 连接。\n\n【易错点】\n- 把 `COUNT(*) > 3` 写进 `WHERE`（聚合函数不能出现在 `WHERE` 中）；\n- “3 门以上”是 `> 3`，“3 门及以上”才是 `>= 3`；\n- `SELECT` 中的 `Student.Sno` 不要漏掉表名前缀，否则连接后会出现列名歧义。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（分组筛选）",
+    "2018春A 四、应用题 第3题",
+    "2017秋A 四、应用题 第(3)题"
+   ]
+  },
+  {
+   "id": "mock1_404",
+   "paper_id": "mock1",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "4",
+   "qtype": "sql",
+   "points": 5,
+   "chapter": "ch3",
+   "topic_tag": "创建视图与分组统计",
+   "difficulty": 3,
+   "context": "已知一个关系数据库的关系模式如下：\n- 供应商：S(Sno, Sname, Scity)，各属性依次为供应商号、供应商名、供应商所在城市；\n- 零件：P(Pno, Pname, Color, Weight)，各属性依次为零件号、零件名称、零件颜色、零件重量；\n- 工程：J(Jno, Jname, Jcity)，各属性依次为工程号、工程名称、工程所在城市；\n- 供货关系：SPJ(Sno, Pno, Jno, QTY)，各属性依次为供货商号、零件号、工程号、供货数量。",
+   "stem": "创建视图 V-SP-AVG（Q），反映“J23456”号工程项目中使用 15 种以上（不含 15 种）由“S00230”号供应商供应的各种零件的平均数量(AQ)；（SQL）",
+   "options": [],
+   "correct_options": [],
+   "answer": "CREATE VIEW V_SP_AVG_Q (Pno, AQ)\nAS\nSELECT Pno, AVG(QTY)\nFROM SPJ\nWHERE Jno = 'J23456' AND Sno = 'S00230'\nGROUP BY Pno\nHAVING COUNT(*) > 15;",
+   "prereq_note": "【0基础前置速通】创建带统计结果的视图：\nCREATE VIEW 视图名(列名1, 列名2)\nAS\nSELECT ...\nFROM ...\nWHERE ...\nGROUP BY ...\nHAVING ...;\n• 当 SELECT 子句中使用了聚集函数（如 AVG(QTY)）时，必须在 CREATE VIEW 视图名后显式指定视图的列名列表（或使用 AS 别名），否则无法创建视图；\n• “不含 15 种”即严格大于 > 15。",
+   "explanation": "【解题思路】\n1. **视图的列**：输出零件号 `Pno` 与平均数量 `AQ` 两列，所以子查询按 `Pno` 分组（`GROUP BY Pno`），`AVG(QTY)` 求每种零件的平均供货数量；\n2. **行筛选**：只看工程 `J23456` 与供应商 `S00230` 的供货记录：`WHERE Jno = 'J23456' AND Sno = 'S00230'`；\n3. **组筛选**：“15 种以上（不含 15）”用 `HAVING COUNT(*) > 15` 表示，聚合条件必须写在 `HAVING` 而不是 `WHERE`；\n4. **视图命名**：`CREATE VIEW 视图名 (列名表) AS 子查询`，视图名要是合法标识符，所以写成 `V_SP_AVG_Q`，不能带 `-` 和括号。\n\n```sql\nCREATE VIEW V_SP_AVG_Q (Pno, AQ)\nAS\nSELECT Pno, AVG(QTY)\nFROM SPJ\nWHERE Jno = 'J23456' AND Sno = 'S00230'\nGROUP BY Pno\nHAVING COUNT(*) > 15;\n```\n\n\n【易错点】\n- 把 `COUNT(*) > 15` 写进 `WHERE`；\n- `SELECT` 里的非聚合列 `Pno` 没有出现在 `GROUP BY` 中；\n- 视图的列名表个数要与子查询输出的列数一致。",
+   "src": "orig",
+   "frm": [
+    "2018春B 四、应用题 第(4)题"
+   ]
+  },
+  {
+   "id": "mock1_405",
+   "paper_id": "mock1",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "5",
+   "qtype": "calc",
+   "points": 5,
+   "chapter": "ch2",
+   "topic_tag": "关系代数除法查询",
+   "difficulty": 2,
+   "context": "已知学生选课数据库的关系模式：\n- Student(Sno, Sname, Sage, Ssex, Dept)：学号、姓名、年龄、性别、所在学院；\n- Course(Cno, Cname, Ccredit, Tname)：课程号、课程名、学分、任课教师；\n- SC(Sno, Cno, Grade)：学号、课程号、成绩。",
+   "stem": "用关系代数表达式完成：查询至少选修了学号为“S01”的学生所选全部课程的学生学号。",
+   "options": [],
+   "correct_options": [],
+   "answer": "$$\\Pi_{\\mathrm{Sno},\\,\\mathrm{Cno}}(\\mathrm{SC}) \\div \\Pi_{\\mathrm{Cno}}\\big(\\sigma_{\\mathrm{Sno}=\\text{'S01'}}(\\mathrm{SC})\\big)$$",
+   "prereq_note": "【0基础前置速通】看到“全部、所有、至少……都”，优先想到除法：被除数 = (对象, 条件) 的搭配，除数 = 必须全部具备的条件。",
+   "explanation": "【解题思路】“至少选修了……的**全部**课程”是典型的除法查询。\n1. 被除数：$\\Pi_{\\mathrm{Sno},\\mathrm{Cno}}(\\mathrm{SC})$，即所有“学号—课程号”的搭配；\n2. 除数：$\\Pi_{\\mathrm{Cno}}(\\sigma_{\\mathrm{Sno}='S01'}(\\mathrm{SC}))$，即 S01 所选的全部课程号；\n3. 相除后，得到的学号所对应的课程集合，包含 S01 选的每一门课。\n\n【易错点】被除数要先投影成只含 Sno、Cno 两列，否则 SC 里的 Grade 列会参与比较，结果不对。结果里包含 S01 自己，属正常。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（关系代数“全部”查询）",
+    "2020春A 四、应用题 第3题",
+    "2018春B 四、应用题 第(2)题"
+   ]
+  },
+  {
+   "id": "mock1_406",
+   "paper_id": "mock1",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "6",
+   "qtype": "calc",
+   "points": 5,
+   "chapter": "ch7",
+   "topic_tag": "关系代数语义与语法树优化",
+   "difficulty": 3,
+   "context": "已知学生选课数据库的关系模式：\n- Student(Sno, Sname, Sage, Ssex, Dept)：学号、姓名、年龄、性别、所在学院；\n- Course(Cno, Cname, Ccredit, Tname)：课程号、课程名、学分、任课教师；\n- SC(Sno, Cno, Grade)：学号、课程号、成绩。",
+   "stem": "给定关系代数表达式：$\\Pi_{\\mathrm{Sname},\\,\\mathrm{Dept}}\\big(\\sigma_{\\mathrm{Ssex}=\\text{'女'}\\ \\land\\ \\mathrm{Cname}=\\text{'数据库'}\\ \\land\\ \\mathrm{Grade}\\geq 90}(\\mathrm{Student}\\bowtie \\mathrm{SC}\\bowtie \\mathrm{Course})\\big)$\n\n① 给出该关系代数表达式的语义（2 分）；\n② 对其进行代数优化，给出语法树（3 分）。",
+   "options": [],
+   "correct_options": [],
+   "answer": "① 语义：\n查询选修了“数据库”课程且成绩不低于 90 分的女生的姓名（Sname）和所在学院（Dept）。\n\n② 代数优化与语法树：\n优化策略：选择运算尽早执行（下推到对应基表），投影运算尽早执行（只保留连接和最终输出所需属性）。\n优化后的关系代数表达式：\n$\\Pi _{\\mathrm{Sname},\\, \\mathrm{Dept}}\\Big( \\Pi _{\\mathrm{Sno},\\, \\mathrm{Sname},\\, \\mathrm{Dept}}(\\sigma _{\\mathrm{Ssex}=\\text{'女'}}(\\mathrm{Student})) \\bowtie \\Pi _{\\mathrm{Sno}}\\big( \\Pi _{\\mathrm{Sno},\\, \\mathrm{Cno}}(\\sigma _{\\mathrm{Grade}\\geq 90}(\\mathrm{SC})) \\bowtie \\Pi _{\\mathrm{Cno}}(\\sigma _{\\mathrm{Cname}=\\text{'数据库'}}(\\mathrm{Course})) \\big) \\Big)$\n\n优化后的语法树：\n```tree\n\\Pi _{\\mathrm{Sname},\\, \\mathrm{Dept}}\n  \\bowtie\n    \\Pi _{\\mathrm{Sno},\\, \\mathrm{Sname},\\, \\mathrm{Dept}}\n      \\sigma _{\\mathrm{Ssex}=\\text{'女'}}\n        =Student\n    \\Pi _{\\mathrm{Sno}}\n      \\bowtie\n        \\Pi _{\\mathrm{Sno},\\, \\mathrm{Cno}}\n          \\sigma _{\\mathrm{Grade}\\geq 90}\n            =SC\n        \\Pi _{\\mathrm{Cno}}\n          \\sigma _{\\mathrm{Cname}=\\text{'数据库'}}\n            =Course\n```",
+   "prereq_note": "【0基础前置速通】优化三招：①选择尽量早做（下推到基表）；②投影尽量早做（保留后面要用的列）；③“笛卡尔积 + 选择”合并成连接。",
+   "explanation": "【分步解析】\n1. 第①问（语义）：把 Student、SC、Course 自然连接后，筛选“女生、课程名为数据库、成绩不低于 90”的记录，最后投影出姓名和学院。\n2. 第②问（代数优化）：\n   • 第一步（选择下推）：把合取条件拆成三个单表条件，分别下推到各自的基表之上：$\\sigma_{\\mathrm{Ssex}='女'}(\\mathrm{Student})$、$\\sigma_{\\mathrm{Grade}\\geq 90}(\\mathrm{SC})$、$\\sigma_{\\mathrm{Cname}='数据库'}(\\mathrm{Course})$。\n   • 第二步（投影下推）：\n     - Student 向上只需提供 Sno（用于连接）以及最终输出的 Sname、Dept；\n     - SC 向上只需提供 Sno、Cno（Grade 选择之后就不再需要）；\n     - Course 向上只需提供 Cno（Cname 选择之后就不再需要）；\n     - SC 与 Course 连接后，只保留 Sno，再与 Student 连接。\n   • 第三步（画树）：按“基表 → 单表选择 → 单表投影 → 连接 → 顶层投影”自底向上画出。\n\n常见陷阱：投影下推时把连接属性（Sno、Cno）裁掉，导致上层无法连接。下层投影必须保留“上层还要用到的连接属性 + 最终输出属性”。",
+   "src": "adapt",
+   "frm": [
+    "2018春B 四、应用题 第(6)题",
+    "2023秋 四、应用题 第6题",
+    "2018春A 四、应用题 第5(2)题"
+   ]
+  },
+  {
+   "id": "mock1_501",
+   "paper_id": "mock1",
+   "section": "五、解答题（每题10分，共20分）",
+   "number": "1",
+   "qtype": "calc",
+   "points": 10,
+   "chapter": "ch4",
+   "topic_tag": "候选码、闭包与保持依赖",
+   "difficulty": 2,
+   "src": "orig",
+   "frm": [
+    "2023秋 五、计算题 第1-(1)题",
+    "2023秋 五、计算题 第1-(2)题",
+    "2023秋 五、计算题 第1-(3)题"
+   ],
+   "context": "已知关系模式 $R(A,\\,B,\\,C,\\,D,\\,E)$，函数依赖集 $F = \\{\\mathrm{AE}\\to D,\\, D\\to A,\\, \\mathrm{DE}\\to B,\\, B\\to D,\\, C\\to D\\}$。",
+   "stem": "(1) 求 R 的候选码，并指出其最高规范化程度；（4 分）\n(2) 求 $(\\mathrm{BD})^+$；（3 分）\n(3) 对 R 的一个分解 P = {AB, BC, CD, ADE, BDE}，判断 P 是否保持函数依赖性。（3 分）",
+   "options": [],
+   "correct_options": [],
+   "answer": "**(1)**\n• 候选码：CE（唯一候选码）\n• 最高规范化程度（最高范式）：1NF\n\n**(2)**\n$(\\mathrm{BD})^+ = \\{A,\\,B,\\,D\\}$（或 ABD）\n\n**(3)**\n是，分解 P 保持函数依赖性。",
+   "prereq_note": "【0基础前置速通】求候选码的四类属性分类法：\n• L 类（只出现在函数依赖左部，或从未出现）：**一定**包含在所有候选码中；\n• R 类（只出现在右部）：**一定不**在任何候选码中；\n先计算 L 类属性的闭包，如果已经包含全部属性 U，则 L 就是**唯一候选码**！\n判断范式阶梯：\n• 默认满足 1NF（关系中属性不可再分）；\n• 若存在非主属性**部分函数依赖**于候选码 → 最高仅为 1NF；\n• 若无部分依赖，但存在非主属性**传递函数依赖**于候选码 → 最高为 2NF；\n• 若无传递依赖 → 至少 3NF；若所有决定因素均含码 → BCNF。",
+   "explanation": "**(1)**\n【解题思路】\n1. **求候选码**：\n   观察 $F = \\{\\mathrm{AE}\\to D,\\, D\\to A,\\, \\mathrm{DE}\\to B,\\, B\\to D,\\, C\\to D\\}$：\n   • 属性 C 和 E 从未出现在任何函数依赖的右部，因此 C 和 E 必然属于每一个候选码。\n   • 计算 $(\\mathrm{CE})^+$：\n     ① 初始：{C, E}\n     ② 由 $C\\to D$，得 {C, D, E}\n     ③ 由 $D\\to A$，得 {A, C, D, E}\n     ④ 由 $\\mathrm{DE}\\to B$，得 {A, B, C, D, E} = U\n   • 因为 $(\\mathrm{CE})^+$ 覆盖全部属性，且任何超码都必须包含 CE，所以 **CE 是 R 的唯一候选码**。\n2. **判断最高范式**：\n   • 主属性为 C、E；非主属性为 A、B、D。\n   • 检查部分函数依赖：由于 $C\\to D$ 且 C 是候选码 CE 的真子集，非主属性 D **部分函数依赖**于候选码 CE（同理由 $C\\to D\\to A$ 得 A 也部分函数依赖于 CE）。\n   • 违反 2NF 定义，因此 R 的最高规范化程度为 **1NF**。\n\n**(2)**\n【解题思路：求属性集闭包 $X^+$】\n1. 初始集合：$X^{(0)} = \\{B,\\,D\\}$\n2. 扫描 F：\n   • $D\\to A$：由于 $D \\in \\{B,\\, D\\}$，将 A 并入，得 $X^{(1)} = \\{A,\\,B,\\,D\\}$\n   • $B\\to D$：D 已在集合中，无新增\n   • $\\mathrm{AE}\\to D$、$\\mathrm{DE}\\to B$ 需要 E，$C\\to D$ 需要 C，均不满足触发条件\n3. 集合不再变化，故 **$(\\mathrm{BD})^+ = \\{A,\\,B,\\,D\\}$**。\n\n**(3)**\n【解题思路：保持函数依赖】\n分解 $\\rho$ 保持函数依赖，是指 F 中的每一条依赖都能由各子模式上的依赖（F 在各子模式属性上的投影）推出。最直观的判断方法：先看 F 中每条依赖的属性是否完整落在某个子模式内，若有依赖跨越多个子模式，再用闭包检验能否间接推出。逐条验证：\n• $\\mathrm{AE}\\to D$：属性 {A, D, E} 完整包含在子模式 ADE 中；\n• $D\\to A$：属性 {A, D} 完整包含在子模式 ADE 中；\n• $\\mathrm{DE}\\to B$：属性 {B, D, E} 完整包含在子模式 BDE 中；\n• $B\\to D$：属性 {B, D} 完整包含在子模式 BDE 中；\n• $C\\to D$：属性 {C, D} 完整包含在子模式 CD 中。\n可见 F 中的每条函数依赖均属于至少一个子模式上的函数依赖投影（$F \\subseteq \\Pi _{\\mathrm{AB}}(F^+) \\cup \\Pi _{\\mathrm{BC}}(F^+) \\cup \\Pi _{\\mathrm{CD}}(F^+) \\cup \\Pi _{\\mathrm{ADE}}(F^+) \\cup \\Pi _{\\mathrm{BDE}}(F^+)$），因此 $F^+$ 与分解后的依赖闭包完全等价，**P 保持函数依赖性**。"
+  },
+  {
+   "id": "mock1_502",
+   "paper_id": "mock1",
+   "section": "五、解答题（每题10分，共20分）",
+   "number": "2",
+   "qtype": "calc",
+   "points": 10,
+   "chapter": "ch4",
+   "topic_tag": "规范化综合（Chase与3NF分解）",
+   "difficulty": 3,
+   "context": "已知关系模式 $R(A,\\,B,\\,C,\\,D,\\,E)$，函数依赖集 $F = \\{A\\to B,\\, C\\to D,\\, E\\to \\mathrm{AC}\\}$。",
+   "stem": "(1) 求 R 的候选码，并判断其最高规范化程度；（2 分）\n(2) 求 R 的最小函数依赖集 $F_{\\min}$；（2 分）\n(3) 判断分解 $\\rho=\\{\\mathrm{AB},\\,\\mathrm{BC},\\,\\mathrm{CDE}\\}$ 是否具有无损连接性；（3 分）\n(4) 将 R 分解为满足 3NF、保持函数依赖且具有无损连接性的模式集合。（3 分）",
+   "options": [],
+   "correct_options": [],
+   "answer": "**(1)** 候选码为 **E**（唯一）；最高规范化程度为 **2NF**。\n\n**(2)** $F_{\\min}=\\{A\\to B,\\ C\\to D,\\ E\\to A,\\ E\\to C\\}$（也可写成 $E\\to \\mathrm{AC}$）。\n\n**(3)** **不具有**无损连接性（Chase 表中没有全为 $a$ 的行，见解析）。\n\n**(4)** $\\rho=\\{\\mathrm{AB},\\ \\mathrm{CD},\\ \\mathrm{ACE}\\}$。",
+   "prereq_note": "【0基础前置速通】求候选码：先找“只出现在左部、从不出现在右部”的属性，它们必在码中；再算闭包看是否够覆盖全部属性。3NF 合成算法：最小依赖集 → 按左部分组 → 若没有子模式含候选码，补一个候选码。",
+   "explanation": "【解题思路】\n**(1) 候选码与范式**\n- E 不出现在任何函数依赖的右部，所以必在候选码中；$E^+$：E → A、C → B（由 A→B）、D（由 C→D），得 $E^+=\\{A,B,C,D,E\\}=U$，故 **E 是唯一候选码**。\n- 主属性只有 E；候选码是单属性，不可能存在部分依赖，所以满足 2NF。但 $E\\to A\\to B$、$E\\to C\\to D$ 中，非主属性 B、D 传递依赖于码，违反 3NF。因此最高为 **2NF**。\n\n**(2) 最小函数依赖集**\n1. 右部拆成单属性：$A\\to B$，$C\\to D$，$E\\to A$，$E\\to C$；\n2. 左部都是单属性，无多余属性；\n3. 逐条检查冗余：去掉 $E\\to A$ 后，$E^+=\\{E,C,D\\}$ 推不出 A，不冗余；去掉 $E\\to C$ 同理；$A\\to B$、$C\\to D$ 去掉后各自推不出右部，都不冗余。\n所以 $F_{\\min}=\\{A\\to B,\\ C\\to D,\\ E\\to A,\\ E\\to C\\}$。\n\n**(3) Chase 判无损**\n初始表（行 = 子模式，列 = A B C D E，该子模式含有的属性填 $a_j$，否则填 $b_{ij}$）：\n\n| | A | B | C | D | E |\n|---|---|---|---|---|---|\n| AB | $a_1$ | $a_2$ | $b_{13}$ | $b_{14}$ | $b_{15}$ |\n| BC | $b_{21}$ | $a_2$ | $a_3$ | $b_{24}$ | $b_{25}$ |\n| CDE | $b_{31}$ | $b_{32}$ | $a_3$ | $a_4$ | $a_5$ |\n\n- 用 $C\\to D$：第 2、3 行的 C 列都是 $a_3$，所以 D 列要相等，把 $b_{24}$ 改成 $a_4$；\n- $A\\to B$：A 列没有相同的值，无法使用；$E\\to AC$：E 列没有相同的值，无法使用。\n\n调整后没有任何一行全是 $a$（第 2 行变成 $b_{21}\\,a_2\\,a_3\\,a_4\\,b_{25}$），所以**不具有无损连接性**。\n\n**(4) 3NF 保持依赖且无损**\n1. 按 $F_{\\min}$ 把左部相同的依赖合并成子模式：AB（A→B）、CD（C→D）、ACE（E→A，E→C）；\n2. 检查候选码 E 是否包含在某个子模式中：ACE 包含 E，所以不用再补；\n3. 保持函数依赖（每个依赖都落在某个子模式里），又因某子模式包含候选码，分解具有无损连接性。\n\n得到 $\\rho=\\{\\mathrm{AB},\\ \\mathrm{CD},\\ \\mathrm{ACE}\\}$。这个结果同时也满足 BCNF。\n\n【易错点】(3) 里做完一次替换就停，记得检查是否还能继续用其他函数依赖；判断结论时要找“有没有一整行全是 $a$”，而不是“有没有 $a$”。",
+   "src": "adapt",
+   "frm": [
+    "2023秋 五、计算题 第2-(1)题",
+    "2023秋 五、计算题 第2-(2)题",
+    "2023秋 五、计算题 第2-(3)题",
+    "2023秋 五、计算题 第2-(4)题"
+   ]
+  },
+  {
+   "id": "mock1_601",
+   "paper_id": "mock1",
+   "section": "六、综合设计题（共15分）",
+   "number": "1",
+   "qtype": "design",
+   "points": 7,
+   "chapter": "ch5",
+   "topic_tag": "E-R图设计",
+   "difficulty": 3,
+   "context": "",
+   "stem": "某医院门诊管理系统需要设计数据库，已知：\n\n**实体及属性：**\n- 科室：科室号、科室名称、电话；\n- 医生：医生号、姓名、职称；\n- 患者：病历号、姓名、性别、年龄；\n- 药品：药品号、药品名称、单价。\n\n**业务规则：**\n- 一个科室有多名医生，一名医生只属于一个科室；\n- 一名医生可以诊治多位患者，一位患者也可以被多名医生诊治，诊治时记录诊治日期和诊断结果；\n- 一位患者可以购买多种药品，一种药品可以被多位患者购买，购买时记录购买数量。\n\n设计该系统的全局 E-R 图。（7 分）",
+   "options": [],
+   "correct_options": [],
+   "answer": "**E-R 图**（矩形：实体；椭圆：属性，下划线为主码；菱形：联系；连线旁为联系类型）\n\n```er\nE 科室 @0,0 | 科室号* 科室名称 电话\nR 属于 @1,0\nE 医生 @2,0 | 医生号* 姓名 职称\nR 诊治 @2,1 | 诊治日期 诊断结果\nE 患者 @2,2 | 病历号* 姓名 性别 年龄\nR 购买 @1,2 | 购买数量\nE 药品 @0,2 | 药品号* 药品名称 单价\nL 科室 1 属于\nL 属于 n 医生\nL 医生 m 诊治\nL 诊治 n 患者\nL 患者 m 购买\nL 购买 n 药品\n```\n\n**文字说明**\n- **属于**（科室—医生）：**1:N**（一个科室多名医生，一名医生只属于一个科室）；\n- **诊治**（医生—患者）：**M:N**，联系属性：诊治日期、诊断结果；\n- **购买**（患者—药品）：**M:N**，联系属性：购买数量。",
+   "prereq_note": "【0基础前置速通】E-R 图三件套：矩形 = 实体，椭圆 = 属性（主码加下划线），菱形 = 联系。联系类型要标在连线上：1:1、1:N、M:N。",
+   "explanation": "【解题思路】\n1. **找实体**：科室、医生、患者、药品，各自的属性题目已给出，主码分别取科室号、医生号、病历号、药品号；\n2. **找联系并判断类型**：\n   - 科室与医生：一个科室多名医生，一名医生只属于一个科室 → 科室 **1 : N** 医生；\n   - 医生与患者：互相都是“多” → **M : N**，诊治日期、诊断结果依赖于“某医生诊治某患者”这个整体，所以挂在联系上；\n   - 患者与药品：互相都是“多” → **M : N**，购买数量挂在联系上；\n3. **画图**：矩形画实体、菱形画联系、椭圆画属性并给主码加下划线，连线旁标 1 / N / M。\n\n【易错点】联系自己的属性（日期、数量等）要画在联系上，不要画到某一端的实体里；画图时不要漏掉联系类型的标注。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（E-R 图设计）",
+    "2023秋 五、综合设计题 第1题",
+    "2020春A 六、综合应用题 第1题"
+   ]
+  },
+  {
+   "id": "mock1_602",
+   "paper_id": "mock1",
+   "section": "六、综合设计题（共15分）",
+   "number": "2",
+   "qtype": "design",
+   "points": 8,
+   "chapter": "ch5",
+   "topic_tag": "E-R图转关系模式",
+   "difficulty": 3,
+   "context": "",
+   "stem": "某医院门诊管理系统需要设计数据库，已知：\n\n**实体及属性：**\n- 科室：科室号、科室名称、电话；\n- 医生：医生号、姓名、职称；\n- 患者：病历号、姓名、性别、年龄；\n- 药品：药品号、药品名称、单价。\n\n**业务规则：**\n- 一个科室有多名医生，一名医生只属于一个科室；\n- 一名医生可以诊治多位患者，一位患者也可以被多名医生诊治，诊治时记录诊治日期和诊断结果；\n- 一位患者可以购买多种药品，一种药品可以被多位患者购买，购买时记录购买数量。\n\n将第(1)问的全局 E-R 图转换为等价的关系模式，并标注各关系的主码和外码。（8 分）",
+   "options": [],
+   "correct_options": [],
+   "answer": "1. **科室**(<u>科室号</u>, 科室名称, 电话)\n   - 主码：科室号\n\n2. **医生**(<u>医生号</u>, 姓名, 职称, 科室号)\n   - 主码：医生号\n   - 外码：科室号（参照 科室(科室号)）\n\n3. **患者**(<u>病历号</u>, 姓名, 性别, 年龄)\n   - 主码：病历号\n\n4. **药品**(<u>药品号</u>, 药品名称, 单价)\n   - 主码：药品号\n\n5. **诊治**(<u>医生号, 病历号</u>, 诊治日期, 诊断结果)\n   - 主码：(医生号, 病历号)\n   - 外码：医生号（参照 医生(医生号)）、病历号（参照 患者(病历号)）\n\n6. **购买**(<u>病历号, 药品号</u>, 购买数量)\n   - 主码：(病历号, 药品号)\n   - 外码：病历号（参照 患者(病历号)）、药品号（参照 药品(药品号)）",
+   "prereq_note": "【0基础前置速通】转换三法则：实体各成一表；1:N 把 1 端主码并入 N 端作外码；M:N 单独成表，两端主码合起来作主码，联系属性并入。",
+   "explanation": "【解题思路】按三条规则转换：\n1. **每个实体**转成一个关系模式：科室、医生、患者、药品，主码不变；\n2. **1:N 联系“属于”**：不单独建表，把 1 端（科室）的主码 `科室号` 放进 N 端（医生）的关系模式中作为外码；\n3. **M:N 联系**：必须单独建一张表，属性由**两端实体的主码 + 联系自身属性**组成，两端主码合起来作主码，同时各自又是外码：\n   - 诊治(医生号, 病历号, 诊治日期, 诊断结果)；\n   - 购买(病历号, 药品号, 购买数量)。\n\n【易错点】\n- 1:N 联系**不要**再单独建表；\n- M:N 联系的主码要用**两端主码组合**，只用其中一个会导致同一医生只能诊治一位患者；\n- 外码要写清“参照哪个关系的哪个属性”。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（E-R 转关系模式）",
+    "2023秋 五、综合设计题 第1题",
+    "2020春A 六、综合应用题 第2题"
+   ]
+  },
+  {
+   "id": "mock2_101",
+   "paper_id": "mock2",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "1",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch5",
+   "topic_tag": "局部ER图合并冲突",
+   "difficulty": 1,
+   "context": "",
+   "stem": "将局部 E-R 图合并为全局 E-R 图时可能会出现冲突，属于合并冲突的是（ ）。",
+   "options": [
+    "A. 属性冲突",
+    "B. 语法冲突",
+    "C. 命名冲突",
+    "D. 结构冲突"
+   ],
+   "correct_options": [
+    "A",
+    "C",
+    "D"
+   ],
+   "answer": "ACD",
+   "prereq_note": "【0基础前置速通】在数据库概念结构设计中，将各分 E-R 图集成为全局 E-R 图时，需要消除三类冲突：\n1. 属性冲突（属性域冲突、属性取值单位冲突）；\n2. 命名冲突（同名异义、异名同义）；\n3. 结构冲突（同一对象在不同应用中抽象不同——如实体与属性互换，或实体间联系类型不同）。",
+   "explanation": "【分步解析】\n1. 属性冲突（A）、命名冲突（C）、结构冲突（D）是视图集成时消除冲突的三大标准类型。\n2. “语法冲突”（B）不是 E-R 图合并冲突的类别（属于编译原理或语言层面的概念）。\n常见陷阱：记忆三类合并冲突可记口诀“属性、命名、结构”。\n\n【补充】“语法冲突”不是 E-R 图集成中的冲突类型，三类冲突是属性、命名、结构。",
+   "src": "orig",
+   "frm": [
+    "2018春B 一、不定项选择题 第5题"
+   ]
+  },
+  {
+   "id": "mock2_102",
+   "paper_id": "mock2",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "2",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch1",
+   "topic_tag": "三级模式与内模式",
+   "difficulty": 1,
+   "context": "",
+   "stem": "在数据库的三级模式结构中，描述数据库物理存储结构的是（ ）",
+   "options": [
+    "A. 外模式",
+    "B. 模式",
+    "C. 内模式",
+    "D. 子模式"
+   ],
+   "correct_options": [
+    "C"
+   ],
+   "answer": "C",
+   "prereq_note": "【0基础前置速通】三级模式 = 外模式（用户看到的）、模式（全局逻辑）、内模式（物理存储）；两级映像（外模式/模式、模式/内模式）保证逻辑独立性和物理独立性。",
+   "explanation": "【分步解析】三级模式各管一层：\n- **外模式**（子模式）：用户视图，描述数据的**局部**逻辑结构；\n- **模式**（概念模式）：描述数据库**全体数据**的全局逻辑结构；\n- **内模式**（存储模式）：描述数据的**物理存储结构**和存储方式。\n\n题目问物理存储结构，选 **C**。A 和 D 是同一层的两种叫法（外模式 = 子模式），都不对；B 是全局逻辑结构。",
+   "src": "adapt",
+   "frm": [
+    "2020_spring_A_2",
+    "2018_spring_A_1"
+   ]
+  },
+  {
+   "id": "mock2_103",
+   "paper_id": "mock2",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "3",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch3",
+   "topic_tag": "聚合函数与NULL处理",
+   "difficulty": 1,
+   "context": "",
+   "stem": "下列聚合函数中忽略空值 null 的是（ ）。",
+   "options": [
+    "A. SUM（列名）",
+    "B. MAX（列名）",
+    "C. COUNT（*）",
+    "D. AVG（列名）"
+   ],
+   "correct_options": [
+    "A",
+    "B",
+    "D"
+   ],
+   "answer": "ABD",
+   "prereq_note": "【0基础前置速通】SQL 聚合函数对空值（NULL）的处理规则：除 COUNT(*) 外，其余所有作用于具体列名的聚合函数——包括 COUNT(列名)、SUM(列名)、AVG(列名)、MAX(列名)、MIN(列名)——在计算时都会自动跳过该列值为 NULL 的行。而 COUNT(*) 统计的是元组（行）的总个数，即使整行字段全为 NULL 也会被计入。",
+   "explanation": "【分步解析】\n1. 本题为不定项选择题。SUM(列名)、MAX(列名)、AVG(列名) 均在计算前先忽略该列值为 NULL 的记录（注意：AVG 是按非空值的个数作分母），因此 A、B、D 正确。\n2. C 选项 COUNT(*) 统计分组中的总行数，不忽略 NULL 值，故不选。\n3. 常见考题陷阱：不要看到单选习惯就只选一个，一定要看清题型是“不定项选择题”。",
+   "src": "orig",
+   "frm": [
+    "2018春A 一、不定项选择题 第2题"
+   ]
+  },
+  {
+   "id": "mock2_104",
+   "paper_id": "mock2",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "4",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch6",
+   "topic_tag": "共享锁(S锁)相容性",
+   "difficulty": 2,
+   "context": "",
+   "stem": "如果事务 T 对数据对象 R 加上了共享锁（S 锁），则（ ）",
+   "options": [
+    "A. T 可以读 R",
+    "B. T 可以修改 R",
+    "C. 其他事务可以对 R 加 S 锁",
+    "D. 其他事务可以对 R 加 X 锁"
+   ],
+   "correct_options": [
+    "A",
+    "C"
+   ],
+   "answer": "AC",
+   "prereq_note": "【0基础前置速通】S 锁 = 读锁（共享），X 锁 = 写锁（排他）。多个读可以并行，写必须独占。",
+   "explanation": "【分步解析】锁的相容规则：S 锁与 S 锁相容，S 锁与 X 锁、X 锁与 X 锁都不相容。\n- 持有 S 锁的事务 T **只能读，不能写**（A 对，B 错）；\n- 其他事务可以**同时再加 S 锁**一起读（C 对）；\n- 其他事务不能加 X 锁去修改（D 错），否则 T 读到的数据就不稳定了。\n\n故选 AC。对照 2018春A 第4题（X 锁）：X 锁持有者既能读又能写，其他事务既不能读也不能写。",
+   "src": "adapt",
+   "frm": [
+    "2018_spring_A_4"
+   ]
+  },
+  {
+   "id": "mock2_105",
+   "paper_id": "mock2",
+   "section": "一、不定项选择题（每题2分，共10分）",
+   "number": "5",
+   "qtype": "choice",
+   "points": 2,
+   "chapter": "ch7",
+   "topic_tag": "数据库恢复技术",
+   "difficulty": 2,
+   "context": "",
+   "stem": "数据库恢复的基本技术有（ ）",
+   "options": [
+    "A. 数据转储",
+    "B. 登记日志文件",
+    "C. 并发控制",
+    "D. 数据库镜像"
+   ],
+   "correct_options": [
+    "A",
+    "B",
+    "D"
+   ],
+   "answer": "ABD",
+   "prereq_note": "【0基础前置速通】恢复 = 备份（转储）+ 流水账（日志）+ 实时双份（镜像）。",
+   "explanation": "【分步解析】数据库恢复的基本思路是“冗余”，实现靠：\n- **数据转储**：定期把数据库复制到其他存储介质上作为后备副本；\n- **登记日志文件**：记录事务对数据库的每次更新操作，用于 UNDO / REDO；\n- **数据库镜像**：实时复制整个数据库，介质故障时可以立刻切换。\n\nC 并发控制属于事务并发管理的内容，用来保证隔离性，不是恢复技术。故选 ABD。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（数据库恢复）",
+    "2020_spring_A_4"
+   ]
+  },
+  {
+   "id": "mock2_201",
+   "paper_id": "mock2",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "1",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch2",
+   "topic_tag": "笛卡尔积目数",
+   "difficulty": 1,
+   "context": "",
+   "stem": "若关系A有m个属性，关系B有n个属性，则A×B有________个属性。",
+   "options": [],
+   "correct_options": [],
+   "answer": "m+n",
+   "prereq_note": "【0基础前置速通】广义笛卡尔积 R × S：\n- 目数（列数/属性数）= R 的目数 + S 的目数（即 m + n）；\n- 基数（行数/元组数）= R 的元组数 × S 的元组数。",
+   "explanation": "【分步解析】\n笛卡尔积是将 A 的每个元组与 B 的每个元组水平拼接成新元组，因此新关系的列数（属性个数）为两者属性数之和，即 **m+n**。常见陷阱：不要把“属性数（列数）相加”与“元组数（行数）相乘”搞混。\n\n【易混】属性数 $=m+n$；元组数 $=|A|\\times|B|$。",
+   "src": "orig",
+   "frm": [
+    "2017秋B 二、填空题 第4题"
+   ]
+  },
+  {
+   "id": "mock2_202",
+   "paper_id": "mock2",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "2",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch1",
+   "topic_tag": "两级映像与独立性",
+   "difficulty": 1,
+   "context": "",
+   "stem": "数据库三级模式之间的外模式/模式映像，保证了数据的______独立性。",
+   "options": [],
+   "correct_options": [],
+   "answer": "逻辑",
+   "prereq_note": "【0基础前置速通】“外-模” 对应“逻辑”，“模-内” 对应“物理”。",
+   "explanation": "【分步解析】两级映像各保证一种独立性：**外模式/模式映像**保证**逻辑独立性**（模式改变时只需改映像，外模式和应用程序可以不变）；**模式/内模式映像**保证**物理独立性**（存储结构改变时只需改映像，模式不变）。",
+   "src": "adapt",
+   "frm": [
+    "2023秋 二、填空题 第3题",
+    "2020_spring_A_6"
+   ]
+  },
+  {
+   "id": "mock2_203",
+   "paper_id": "mock2",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "3",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch7",
+   "topic_tag": "自主存取控制SQL",
+   "difficulty": 1,
+   "context": "",
+   "stem": "自主存取控制功能一般是通过 SQL 的 GRANT 语句和（      ）语句实现。",
+   "options": [],
+   "correct_options": [],
+   "answer": "REVOKE",
+   "prereq_note": "【0基础前置速通】数据库安全性中的自主存取控制（DAC）允许用户自主地将自己拥有的权限授予他人或收回：\n- 授权语句：GRANT <权限> ON <对象> TO <用户>;\n- 收回权限语句：REVOKE <权限> ON <对象> FROM <用户>;",
+   "explanation": "【分步解析】\n1. SQL 中数据控制语言（DCL）用于自主存取控制的核心语句只有两个：GRANT（授予权限）和 REVOKE（收回权限）。\n2. 书写注意：SQL 关键字通常写为全大写 REVOKE。\n\n【对应】`GRANT` 授权，`REVOKE` 回收；强制存取控制则按安全级别（MAC）。",
+   "src": "orig",
+   "frm": [
+    "2020春A 二、填空题 第2题"
+   ]
+  },
+  {
+   "id": "mock2_204",
+   "paper_id": "mock2",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "4",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch4",
+   "topic_tag": "第二范式定义",
+   "difficulty": 1,
+   "context": "",
+   "stem": "若关系模式 R∈1NF，且每一个非主属性都完全函数依赖于候选码，则 R 属于______。",
+   "options": [],
+   "correct_options": [],
+   "answer": "2NF（第二范式）",
+   "prereq_note": "【0基础前置速通】部分依赖：依赖于码的“一部分”；完全依赖：必须依赖整个码。2NF 就是不允许非主属性“部分依赖”。",
+   "explanation": "【分步解析】1NF 要求属性不可再分；在此基础上，若**消除了非主属性对候选码的部分函数依赖**（每个非主属性都完全函数依赖于候选码），就达到 2NF；再消除传递依赖达到 3NF；再消除主属性的依赖问题达到 BCNF。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（范式定义）",
+    "2018春B 一、不定项选择题 第2题"
+   ]
+  },
+  {
+   "id": "mock2_205",
+   "paper_id": "mock2",
+   "section": "二、填空题（每空2分，共10分）",
+   "number": "5",
+   "qtype": "fill",
+   "points": 2,
+   "chapter": "ch3",
+   "topic_tag": "DROP与DELETE区别",
+   "difficulty": 1,
+   "context": "",
+   "stem": "SQL 语言中，删除一个基本表（包括其结构和全部数据）使用的命令是______。",
+   "options": [],
+   "correct_options": [],
+   "answer": "DROP TABLE",
+   "prereq_note": "【0基础前置速通】DROP 删“表本身”，DELETE 删“表里的行”，ALTER 改“表结构”。",
+   "explanation": "【分步解析】`DROP TABLE 表名` 删除整个表的定义和数据；`DELETE FROM 表名 [WHERE ...]` 只删除表中的行，表的结构保留（2017秋A 第7题同时考了这两个）；`ALTER TABLE` 用来修改表结构。",
+   "src": "adapt",
+   "frm": [
+    "2017秋A 二、填空题 第2题"
+   ]
+  },
+  {
+   "id": "mock2_301",
+   "paper_id": "mock2",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "1",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "关系代数除法",
+   "difficulty": 2,
+   "context": "设有关系 R、S、W，如下所示：\n\nR：\n| A | B | C |\n|---|---|---|\n| A1 | B1 | C2 |\n| A2 | B2 | C3 |\n| A1 | B2 | C3 |\n\nS：\n| A | B | C |\n|---|---|---|\n| A1 | B2 | C2 |\n| A2 | B2 | C3 |\n| A1 | B1 | C2 |\n| A3 | B4 | C6 |\n\nW：\n| B | C | D |\n|---|---|---|\n| B1 | C2 | D4 |\n| B2 | C3 | D2 |",
+   "stem": "试求关系代数表达式 $(R \\cup S) \\div W$ 的结果关系。",
+   "options": [],
+   "correct_options": [],
+   "answer": "| A |\n|---|\n| A1 |",
+   "prereq_note": "【0基础前置速通】设关系 $T(X,\\,Y)$ 与 $W(Y,\\,Z)$，其中 Y 为 T 与 W 的公共属性组。广义关系除法 $T \\div W$ 的步骤：\n1. 找出公共属性 Y 上的除数取值集合：$\\Pi _{Y}(W)$；\n2. 结果属性为 T 中独有的属性 X = Attr(T) - Attr(W)；\n3. 对每个 $x \\in \\Pi _{X}(T)$，求其在 T 中对应的 Y 像集 $Y_x$；若 $\\Pi _{Y}(W) \\subseteq Y_{x}$（即 x 配齐了 W 中出现的所有 Y 组合），则保留 x。",
+   "explanation": "【分步解析】\n1. 先确定公共属性与结果属性：\n   • $R \\cup S$ 的属性为 (A, B, C)，W 的属性为 (B, C, D)。\n   • 公共属性 Y = {B, C}，结果属性 X = {A}。\n2. 求除数 W 在公共属性 {B, C} 上的投影：\n   • $\\Pi _{B,\\,C}(W) = \\{(\\mathrm{B1},\\, \\mathrm{C2}),\\, (\\mathrm{B2},\\, \\mathrm{C3})\\}$。\n3. 从第 1 题结果 $R \\cup S$ 中分别求出每个 A 值的 {B, C} 像集：\n   • A1 的像集：{(B1, C2), (B2, C3), (B2, C2)}，包含 $\\{(\\mathrm{B1},\\, \\mathrm{C2}),\\, (\\mathrm{B2},\\, \\mathrm{C3})\\}$ → 满足条件，保留 A1。\n   • A2 的像集：{(B2, C3)}，缺少 $(\\mathrm{B1},\\, \\mathrm{C2})$ → 淘汰。\n   • A3 的像集：{(B4, C6)}，不包含除数投影 → 淘汰。\n4. 故最终结果为只含 1 行 1 列的关系：{(A1)}。\n常见陷阱：做广义除法时容易把 W 独有的属性 D 也当成公共条件；实际上只看两者的公共属性 {B, C}。",
+   "src": "orig",
+   "frm": [
+    "2018春B 三、计算题 第3题"
+   ]
+  },
+  {
+   "id": "mock2_302",
+   "paper_id": "mock2",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "2",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "等值连接与投影",
+   "difficulty": 2,
+   "context": "设有关系 R、S、W，如下所示：\n\nR：\n| A | B | C |\n|---|---|---|\n| A1 | B1 | C2 |\n| A2 | B2 | C3 |\n| A1 | B2 | C3 |\n\nS：\n| A | B | C |\n|---|---|---|\n| A1 | B2 | C2 |\n| A2 | B2 | C3 |\n| A1 | B1 | C2 |\n| A3 | B4 | C6 |\n\nW：\n| B | C | D |\n|---|---|---|\n| B1 | C2 | D4 |\n| B2 | C3 | D2 |",
+   "stem": "试求关系代数表达式 $\\Pi _{A,\\,D}(\\sigma _{\\mathrm{S.C}=\\mathrm{W.C}}(S \\times W))$ 的结果关系。",
+   "options": [],
+   "correct_options": [],
+   "answer": "| A | D |\n|---|---|\n| A1 | D4 |\n| A2 | D2 |",
+   "prereq_note": "【0基础前置速通】$\\sigma _{\\mathrm{S.C}=\\mathrm{W.C}}(S \\times W)$ 本质上是 S 与 W 基于条件 S.C = W.C 的等值连接（注意它不是自然连接，只要求 C 相等，不要求 B 相等！）。最后再对结果投影出 (A, D) 并去重。",
+   "explanation": "【分步解析】\n1. 检查 S 中每条元组的 C 值与 W 中元组的 C 值相等的配对：\n   • S 第 1 行 (A1, B2, C2) 与 W 第 1 行 (B1, C2, D4) 满足 $\\mathrm{S.C}=\\mathrm{W.C}=\\mathrm{C2}$ → 投影 (A, D) 得 (A1, D4)。\n   • S 第 2 行 (A2, B2, C3) 与 W 第 2 行 (B2, C3, D2) 满足 $\\mathrm{S.C}=\\mathrm{W.C}=\\mathrm{C3}$ → 投影 (A, D) 得 (A2, D2)。\n   • S 第 3 行 (A1, B1, C2) 与 W 第 1 行 (B1, C2, D4) 满足 $\\mathrm{S.C}=\\mathrm{W.C}=\\mathrm{C2}$ → 投影 (A, D) 得 (A1, D4)。\n   • S 第 4 行 (A3, B4, C6) 在 W 中无 C6 匹配。\n2. 投影去重：两个 (A1, D4) 合并为一条，最终结果为 {(A1, D4), (A2, D2)}。\n常见陷阱：\n(1) 误当成自然连接而额外要求 S.B = W.B（那样会漏掉 S 第 1 行）；\n(2) 最后投影时忘记把重复的 (A1, D4) 去重。",
+   "src": "orig",
+   "frm": [
+    "2018春B 三、计算题 第5题"
+   ]
+  },
+  {
+   "id": "mock2_303",
+   "paper_id": "mock2",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "3",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "选择与差运算",
+   "difficulty": 1,
+   "context": "设有关系 R、S、W，如下所示：\n\nR：\n| A | B | C |\n|---|---|---|\n| A1 | B1 | C2 |\n| A2 | B2 | C3 |\n| A1 | B2 | C3 |\n\nS：\n| A | B | C |\n|---|---|---|\n| A1 | B2 | C2 |\n| A2 | B2 | C3 |\n| A1 | B1 | C2 |\n| A3 | B4 | C6 |\n\nW：\n| B | C | D |\n|---|---|---|\n| B1 | C2 | D4 |\n| B2 | C3 | D2 |",
+   "stem": "试求关系代数表达式 $\\sigma_{A=\\text{'A1'}}(S) - R$ 的结果关系。",
+   "options": [],
+   "correct_options": [],
+   "answer": "| A | B | C |\n|---|---|---|\n| A1 | B2 | C2 |",
+   "prereq_note": "【0基础前置速通】选择 $\\sigma$ 挑“行”，投影 $\\Pi$ 挑“列”，差 $-$ 是“属于前者而不属于后者”。",
+   "explanation": "【分步解析】\n1. 先做选择：$\\sigma_{A='A1'}(S)=\\{(A1,B2,C2),\\ (A1,B1,C2)\\}$；\n2. 再做差：R 中含有 (A1,B1,C2)，因此该行被删除；(A1,B2,C2) 不在 R 中，保留。\n\n结果只有 1 行：(A1, B2, C2)。\n\n常见陷阱：先做差再做选择也能得到同样结果，但差运算要求“前减后”，不要把顺序写反。",
+   "src": "adapt",
+   "frm": [
+    "2018春B 三、计算题 第2题"
+   ]
+  },
+  {
+   "id": "mock2_304",
+   "paper_id": "mock2",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "4",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "关系代数自然连接",
+   "difficulty": 1,
+   "context": "设有关系 R、S、W，如下所示：\n\nR：\n| A | B | C |\n|---|---|---|\n| A1 | B1 | C2 |\n| A2 | B2 | C3 |\n| A1 | B2 | C3 |\n\nS：\n| A | B | C |\n|---|---|---|\n| A1 | B2 | C2 |\n| A2 | B2 | C3 |\n| A1 | B1 | C2 |\n| A3 | B4 | C6 |\n\nW：\n| B | C | D |\n|---|---|---|\n| B1 | C2 | D4 |\n| B2 | C3 | D2 |",
+   "stem": "试求关系代数表达式 $R \\bowtie W$ 的结果关系。",
+   "options": [],
+   "correct_options": [],
+   "answer": "| A | B | C | D |\n|---|---|---|---|\n| A1 | B1 | C2 | D4 |\n| A1 | B2 | C3 | D2 |\n| A2 | B2 | C3 | D2 |",
+   "prereq_note": "【0基础前置速通】自然连接：同名列全相等才拼，结果里同名列只留一份。",
+   "explanation": "【分步解析】\n1. R(A,B,C) 与 W(B,C,D) 的公共属性是 (B, C)，结果属性为 (A, B, C, D)；\n2. 逐行匹配：\n   - R 的 (A1, B1, C2) ↔ W 的 (B1, C2, D4) → (A1, B1, C2, D4)；\n   - R 的 (A2, B2, C3) ↔ W 的 (B2, C3, D2) → (A2, B2, C3, D2)；\n   - R 的 (A1, B2, C3) ↔ W 的 (B2, C3, D2) → (A1, B2, C3, D2)。\n\n共 3 行。\n\n常见陷阱：只按 B 列或只按 C 列匹配；自然连接必须**所有同名列**都相等。",
+   "src": "adapt",
+   "frm": [
+    "2018春B 三、计算题 第5题",
+    "2020春A 三、简单应用题 第2题"
+   ]
+  },
+  {
+   "id": "mock2_305",
+   "paper_id": "mock2",
+   "section": "三、简单应用题（每题3分，共15分）",
+   "number": "5",
+   "qtype": "calc",
+   "points": 3,
+   "chapter": "ch2",
+   "topic_tag": "投影、选择与差",
+   "difficulty": 2,
+   "context": "设有关系 R、S、W，如下所示：\n\nR：\n| A | B | C |\n|---|---|---|\n| A1 | B1 | C2 |\n| A2 | B2 | C3 |\n| A1 | B2 | C3 |\n\nS：\n| A | B | C |\n|---|---|---|\n| A1 | B2 | C2 |\n| A2 | B2 | C3 |\n| A1 | B1 | C2 |\n| A3 | B4 | C6 |\n\nW：\n| B | C | D |\n|---|---|---|\n| B1 | C2 | D4 |\n| B2 | C3 | D2 |",
+   "stem": "试求关系代数表达式 $\\Pi_{A}(R) - \\Pi_{A}(\\sigma_{B=\\text{'B1'}}(S))$ 的结果关系。",
+   "options": [],
+   "correct_options": [],
+   "answer": "| A |\n|---|\n| A2 |",
+   "prereq_note": "【0基础前置速通】运算顺序：括号里的先算。投影会把重复行合并成一行。",
+   "explanation": "【分步解析】\n1. $\\Pi_{A}(R)=\\{A1,\\ A2\\}$（A1 出现两次，投影后去重）；\n2. $\\sigma_{B='B1'}(S)=\\{(A1,B1,C2)\\}$，再投影 A 得 $\\{A1\\}$；\n3. 做差：$\\{A1,A2\\}-\\{A1\\}=\\{A2\\}$。\n\n结果为 1 行 1 列：A2。\n\n常见陷阱：投影后忘记去重；差运算两边的列数要一致（这里两边都只剩 A 一列）。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（集合运算组合）",
+    "2018春B 三、计算题 第4题"
+   ]
+  },
+  {
+   "id": "mock2_401",
+   "paper_id": "mock2",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "1",
+   "qtype": "sql",
+   "points": 5,
+   "chapter": "ch3",
+   "topic_tag": "带子查询的UPDATE",
+   "difficulty": 2,
+   "context": "已知一个关系数据库的关系模式如下：\n- 供应商：S(Sno, Sname, Scity)，各属性依次为供应商号、供应商名、供应商所在城市；\n- 零件：P(Pno, Pname, Color, Weight)，各属性依次为零件号、零件名称、零件颜色、零件重量；\n- 工程：J(Jno, Jname, Jcity)，各属性依次为工程号、工程名称、工程所在城市；\n- 供货关系：SPJ(Sno, Pno, Jno, QTY)，各属性依次为供货商号、零件号、工程号、供货数量。",
+   "stem": "将“京东”供应商供应给“天猫”工程的所有零件的数量修改为 1800；（SQL）",
+   "options": [],
+   "correct_options": [],
+   "answer": "UPDATE SPJ\nSET QTY = 1800\nWHERE Sno IN (SELECT Sno FROM S WHERE Sname = '京东')\n  AND Jno IN (SELECT Jno FROM J WHERE Jname = '天猫');",
+   "prereq_note": "【0基础前置速通】UPDATE 语句语法：\nUPDATE <表名> SET <列名>=<表达式> [WHERE <条件>];\n当 WHERE 条件需要用到其他表的信息（如供应商名在 S 表，工程名在 J 表，而要修改的数量 QTY 在 SPJ 表）时，可以在 WHERE 中嵌套子查询将名称转换为编号（Sno, Jno）。",
+   "explanation": "【分步解析】\n1. 要修改的列是 SPJ 表中的供货数量 QTY，目标值为 1800：`UPDATE SPJ SET QTY = 1800`。\n2. SPJ 表中只存了编号 Sno 和 Jno，没有存名称 Sname 和 Jname，因此用两个子查询定位：\n   • 供应商号：`Sno IN (SELECT Sno FROM S WHERE Sname = '京东')`\n   • 工程号：`Jno IN (SELECT Jno FROM J WHERE Jname = '天猫')`\n3. 用 AND 连接两个条件即可精准更新。\n常见陷阱：使用 `IN` 比 `=` 更安全（万一存在重名供应商/工程，用 `=` 会导致子查询返回多行报错；若名称唯一，用 `=` 也可）。",
+   "src": "orig",
+   "frm": [
+    "2018春B 四、应用题 第(5)题"
+   ]
+  },
+  {
+   "id": "mock2_402",
+   "paper_id": "mock2",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "2",
+   "qtype": "sql",
+   "points": 5,
+   "chapter": "ch3",
+   "topic_tag": "GROUP BY与HAVING",
+   "difficulty": 2,
+   "context": "已知学生选课数据库的关系模式：\n- 学生表 `S(Sno, Sname, Ssex, Sbirth, Sdeptno)`\n- 系别表 `Dept(Deptno, Deptname)`\n- 课程表 `C(Cno, Cname, Ccredit)`\n- 选课表 `SC(Sno, Cno, Grade)`",
+   "stem": "查询选修了 2 门以上（不含 2 门）4 学分课程的学生的学号和姓名。（SQL）",
+   "options": [],
+   "correct_options": [],
+   "answer": "```sql\nSELECT S.Sno, S.Sname\nFROM S, SC, C\nWHERE S.Sno = SC.Sno\n  AND SC.Cno = C.Cno\n  AND C.Ccredit = 4\nGROUP BY S.Sno, S.Sname\nHAVING COUNT(*) > 2;\n```",
+   "prereq_note": "【0基础前置速通】先 WHERE 筛行（学分 = 4），再 GROUP BY 分组，最后 HAVING 筛组（门数 > 2）。",
+   "explanation": "【解题思路】\n1. 姓名在 S、选课记录在 SC、学分在 C，所以三表连接：`S.Sno = SC.Sno AND SC.Cno = C.Cno`；\n2. “4 学分课程”是对**行**的条件，放在 `WHERE`：`C.Ccredit = 4`；\n3. 按学生分组 `GROUP BY S.Sno, S.Sname`；\n4. “2 门以上”是对**组**的条件，放在 `HAVING COUNT(*) > 2`。\n\n【易错点】学分条件必须在分组之前过滤（`WHERE`），否则统计出来的“课程门数”会把非 4 学分的课程也算进去；“2 门以上（不含 2 门）”是 `> 2`。",
+   "src": "adapt",
+   "frm": [
+    "2017秋A 四、应用题 第(3)题"
+   ]
+  },
+  {
+   "id": "mock2_403",
+   "paper_id": "mock2",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "3",
+   "qtype": "sql",
+   "points": 5,
+   "chapter": "ch3",
+   "topic_tag": "NOT EXISTS与NOT IN",
+   "difficulty": 2,
+   "context": "已知学生选课数据库的关系模式：\n- 学生表 `S(Sno, Sname, Ssex, Sbirth, Sdeptno)`\n- 系别表 `Dept(Deptno, Deptname)`\n- 课程表 `C(Cno, Cname, Ccredit)`\n- 选课表 `SC(Sno, Cno, Grade)`",
+   "stem": "查询没有选修任何课程的学生的学号和姓名。（SQL）",
+   "options": [],
+   "correct_options": [],
+   "answer": "```sql\nSELECT Sno, Sname\nFROM S\nWHERE NOT EXISTS (\n    SELECT *\n    FROM SC\n    WHERE SC.Sno = S.Sno\n);\n```\n\n等价写法：\n\n```sql\nSELECT Sno, Sname\nFROM S\nWHERE Sno NOT IN (SELECT Sno FROM SC);\n```",
+   "prereq_note": "【0基础前置速通】`EXISTS (子查询)`：子查询有结果就为真；`NOT EXISTS`：子查询没有结果才为真。相关子查询里引用外层表的列。",
+   "explanation": "【解题思路】“没有……任何……”是典型的否定查询，用 `NOT EXISTS` 或 `NOT IN`：\n1. 相关子查询 `SELECT * FROM SC WHERE SC.Sno = S.Sno`：找出某个学生的选课记录；\n2. `NOT EXISTS` 表示这个子查询结果为空，即该学生没有任何选课记录；\n3. `NOT IN` 的写法是：学号不在 SC 表的学号集合里。\n\n【易错点】不能用 `S.Sno <> SC.Sno` 的连接来表示“没选课”，那样会得出“和任何一条选课记录不同”的大量错误结果；`NOT IN` 在子查询含 NULL 时结果会出问题，`NOT EXISTS` 更稳妥。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（“没有选修任何课程”）"
+   ]
+  },
+  {
+   "id": "mock2_404",
+   "paper_id": "mock2",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "4",
+   "qtype": "sql",
+   "points": 5,
+   "chapter": "ch3",
+   "topic_tag": "创建视图与GROUP BY",
+   "difficulty": 2,
+   "context": "现有学生选课数据库关系模型：\n- 学生表 `S(Sno, Sname, Ssex, Sbirth, Sdeptno)`\n- 系别表 `Dept(Deptno, Deptname)`\n- 课程表 `C(Cno, Cname, Ccredit)`\n- 选课表 `SC(Sno, Cno, Grade)`",
+   "stem": "创建反映两门以上（含两门）成绩超过90分（不含90分）的学生这些课程的平均成绩的视图 VSG(Sno, Gavg)。（SQL语言）",
+   "options": [],
+   "correct_options": [],
+   "answer": "CREATE VIEW VSG(Sno, Gavg)\nAS\nSELECT Sno, AVG(Grade)\nFROM SC\nWHERE Grade > 90\nGROUP BY Sno\nHAVING COUNT(*) >= 2;",
+   "prereq_note": "【0基础前置速通】区分 `WHERE` 和 `HAVING` 是 SQL 分组查询的核心：\n1. `WHERE` 在分组【之前】执行，过滤单个元组（不能用聚合函数 `COUNT/AVG`）。\n2. `GROUP BY` 按指定列把满足 `WHERE` 的元组分组。\n3. `HAVING` 在分组【之后】执行，对每个分组的统计结果进行筛选（必须用聚合函数）。\n4. 创建视图语法：`CREATE VIEW 视图名(列名表) AS SELECT ...;`（当 `SELECT` 中包含聚集函数表达式时，视图定义必须显式给出全部列名）。",
+   "explanation": "【分步解析】\n1. 仔细审题：“成绩超过90分（不含90分）”且算的是“**这些课程**的平均成绩”——说明必须先用 `WHERE Grade > 90` 过滤出 90 分以上的选课记录，再求平均！\n2. 按学生学号分组：`GROUP BY Sno`。\n3. 要求“两门以上（含两门）”：因为分组前已经过滤了 `Grade > 90`，每组内剩的都是 >90 分的课，所以直接用 `HAVING COUNT(*) >= 2`。\n4. 计算这些课程的平均分：`SELECT Sno, AVG(Grade)`。\n5. 易错点：如果把 `Grade > 90` 错放进 `HAVING` 或漏掉 `WHERE Grade > 90`，就会把 90 分以下的课也算进 `AVG(Grade)`，导致逻辑错误。",
+   "src": "orig",
+   "frm": [
+    "2020春A 四、应用题 第5题"
+   ]
+  },
+  {
+   "id": "mock2_405",
+   "paper_id": "mock2",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "5",
+   "qtype": "calc",
+   "points": 5,
+   "chapter": "ch2",
+   "topic_tag": "关系代数差运算查询",
+   "difficulty": 2,
+   "context": "已知学生选课数据库的关系模式：\n- 学生表 `S(Sno, Sname, Ssex, Sbirth, Sdeptno)`\n- 系别表 `Dept(Deptno, Deptname)`\n- 课程表 `C(Cno, Cname, Ccredit)`\n- 选课表 `SC(Sno, Cno, Grade)`",
+   "stem": "用关系代数表达式完成：查询选修了 C1 号课程但没有选修 C2 号课程的学生学号。",
+   "options": [],
+   "correct_options": [],
+   "answer": "$$\\Pi_{\\mathrm{Sno}}\\big(\\sigma_{\\mathrm{Cno}=\\text{'C1'}}(\\mathrm{SC})\\big) - \\Pi_{\\mathrm{Sno}}\\big(\\sigma_{\\mathrm{Cno}=\\text{'C2'}}(\\mathrm{SC})\\big)$$",
+   "prereq_note": "【0基础前置速通】“既……又……”用交（或两次连接），“……但没有……”用差，“全部、所有”用除法。",
+   "explanation": "【解题思路】“选了 A 但没选 B”是典型的**差运算**：\n1. 选了 C1 的学号集合：$\\Pi_{\\mathrm{Sno}}(\\sigma_{\\mathrm{Cno}='C1'}(\\mathrm{SC}))$；\n2. 选了 C2 的学号集合：$\\Pi_{\\mathrm{Sno}}(\\sigma_{\\mathrm{Cno}='C2'}(\\mathrm{SC}))$；\n3. 前者减去后者，剩下只选了 C1、没选 C2 的学号。\n\n【易错点】不能写成 $\\sigma_{\\mathrm{Cno}='C1'\\ \\land\\ \\mathrm{Cno}\\neq'C2'}(\\mathrm{SC})$：SC 里每一行只有一个课程号，这个条件只会挑出所有选了 C1 的行，完全没有排除“同时选了 C2”的学生。对比 2020春A 第18题（“至少选修 C3 和 C4”，用交运算或除法）。",
+   "src": "adapt",
+   "frm": [
+    "2020春A 四、应用题 第3题"
+   ]
+  },
+  {
+   "id": "mock2_406",
+   "paper_id": "mock2",
+   "section": "四、应用题（每题5分，共30分）",
+   "number": "6",
+   "qtype": "calc",
+   "points": 5,
+   "chapter": "ch2",
+   "topic_tag": "关系代数与查询优化",
+   "difficulty": 3,
+   "context": "现有学生选课数据库关系模型：\n- 学生表 `S(Sno, Sname, Ssex, Sbirth, Sdeptno)`\n- 系别表 `Dept(Deptno, Deptname)`\n- 课程表 `C(Cno, Cname, Ccredit)`\n- 选课表 `SC(Sno, Cno, Grade)`",
+   "stem": "查询操作系统课程成绩为85分以上（不含85分）的学生学号（关系代数），对其进行代数优化，并给出语法树。",
+   "options": [],
+   "correct_options": [],
+   "answer": "**1. 关系代数表达式**（2分）：\n$$\\Pi_{\\mathrm{Sno}}\\big(\\sigma_{\\mathrm{Cname}=\\text{'操作系统'}\\ \\land\\ \\mathrm{Grade}>85}(\\mathrm{SC}\\bowtie C)\\big)$$\n\n**2. 代数优化后的语法树**（3分）：\n\n```tree\n\\Pi _{\\mathrm{Sno}}\n  \\sigma _{\\mathrm{SC.Cno}=\\mathrm{C.Cno}}\n    \\times \n      \\sigma _{\\mathrm{Cname}=\\text{'操作系统'}}\n        =C\n      \\sigma _{\\mathrm{Grade}>85}\n        =SC\n```\n\n进一步优化：在 `C` 分支上先投影 $\\Pi_{\\mathrm{Cno}}$，在 `SC` 分支上先投影 $\\Pi_{\\mathrm{Sno,Cno}}$，减少每个元组的宽度，效果更好。",
+   "prereq_note": "【0基础前置速通】关系代数查询优化的黄金启发式规则：\n1. 【选择运算尽量先做】（下推 $\\sigma $）：在连接或笛卡尔积之前，先把各自表里不满足条件的记录过滤掉，能大幅减少参与连接的元组数量。\n2. 【把笛卡尔积和紧邻的选择合并为连接】，或将选择条件下推到叶节点 `C` 和 `SC` 上。\n3. 【投影运算尽量先做】（下推 $\\Pi $）：只保留后续连接和输出所需的属性列，减少中间结果宽度。",
+   "explanation": "【解题思路】\n**第 1 步：写出直接表达语义的表达式**\n课程名在 `C`，成绩在 `SC`，所以先把 `SC` 与 `C` 按 `Cno` 自然连接，再按“操作系统且成绩 > 85”选择，最后投影学号：\n$$\\Pi_{\\mathrm{Sno}}\\big(\\sigma_{\\mathrm{Cname}='操作系统'\\land \\mathrm{Grade}>85}(\\mathrm{SC}\\bowtie C)\\big)$$\n\n**第 2 步：展开连接，便于优化**\n自然连接可写成“选择 + 笛卡尔积”：$\\mathrm{SC}\\bowtie C=\\sigma_{\\mathrm{SC.Cno}=\\mathrm{C.Cno}}(\\mathrm{SC}\\times C)$（再投影去掉重复列）。\n\n**第 3 步：选择下推**\n利用“选择对笛卡尔积的分配律”，把只涉及单个关系的条件推到该关系上方：\n- $\\sigma_{\\mathrm{Cname}='操作系统'}$ 推到 `C` 上 → 课程表只剩“操作系统”这一门课；\n- $\\sigma_{\\mathrm{Grade}>85}$ 推到 `SC` 上 → 选课表只剩成绩大于 85 的记录。\n再做笛卡尔积与连接条件筛选，参与运算的元组大大减少。\n\n**第 4 步：投影下推（进阶）**\n`C` 分支只需保留 `Cno`，`SC` 分支只需保留 `Sno, Cno`。\n\n【优化原则速记】① 选择越早越好；② 投影越早越好（但要保留后面还要用的属性）；③ 笛卡尔积尽量与选择合并为连接。",
+   "src": "orig",
+   "frm": [
+    "2020春A 四、应用题 第4题"
+   ]
+  },
+  {
+   "id": "mock2_501",
+   "paper_id": "mock2",
+   "section": "五、解答题（每题10分，共20分）",
+   "number": "1",
+   "qtype": "calc",
+   "points": 10,
+   "chapter": "ch4",
+   "topic_tag": "规范化综合（订单明细）",
+   "difficulty": 2,
+   "context": "已知关系模式 R(订单号, 客户号, 客户名, 商品号, 商品名, 单价, 数量)，其语义为：\n(1) 一个订单只属于一个客户；\n(2) 每个客户只有一个客户名；\n(3) 每种商品只有一个商品名和一个单价；\n(4) 同一订单中，每种商品只有一个数量。",
+   "stem": "(1) 写出 R 的函数依赖集 F；（3 分）\n(2) 求 R 的候选码，并判断 R 的最高规范化程度，说明理由；（4 分）\n(3) 将 R 分解为满足 3NF、保持函数依赖且具有无损连接性的关系模式集合。（3 分）",
+   "options": [],
+   "correct_options": [],
+   "answer": "**(1)** $F=\\{\\text{订单号}\\to\\text{客户号},\\ \\text{客户号}\\to\\text{客户名},\\ \\text{商品号}\\to\\text{商品名},\\ \\text{商品号}\\to\\text{单价},\\ (\\text{订单号},\\text{商品号})\\to\\text{数量}\\}$\n\n**(2)** 候选码为 **(订单号, 商品号)**；最高规范化程度为 **1NF**（理由：非主属性“客户号、客户名、商品名、单价”对码存在部分函数依赖，不满足 2NF）。\n\n**(3)**\n- 订单(<u>订单号</u>, 客户号)\n- 客户(<u>客户号</u>, 客户名)\n- 商品(<u>商品号</u>, 商品名, 单价)\n- 订单明细(<u>订单号, 商品号</u>, 数量)",
+   "prereq_note": "【0基础前置速通】由语义写依赖：“每个 X 只有一个 Y” ⇒ X→Y。部分依赖：非主属性只依赖于码的一部分，会导致 2NF 不成立。",
+   "explanation": "【解题思路】\n**(1) 由语义写依赖**：逐条把语义翻译成函数依赖——语义(1)得到 订单号→客户号；(2)得到 客户号→客户名；(3)得到 商品号→商品名、商品号→单价；(4)得到 (订单号, 商品号)→数量。\n\n**(2) 候选码与范式**\n- 订单号、商品号从来不出现在任何依赖的右部，所以必在码中；而 (订单号, 商品号) 的闭包：订单号 → 客户号 → 客户名，商品号 → 商品名、单价，加上本身决定数量，闭包为全部属性，所以候选码是 **(订单号, 商品号)**，且唯一。\n- 非主属性有 客户号、客户名、商品名、单价、数量。其中 订单号→客户号 说明“客户号”依赖于码的一部分（订单号），商品号→商品名 说明“商品名”依赖于码的一部分（商品号），存在**部分函数依赖**，不满足 2NF，因此最高是 **1NF**。\n\n**(3) 3NF 分解**\n1. 最小依赖集就是上面的 F（右部均为单属性，无冗余）；\n2. 按左部分组：订单(订单号, 客户号)、客户(客户号, 客户名)、商品(商品号, 商品名, 单价)、订单明细(订单号, 商品号, 数量)；\n3. 订单明细包含候选码 (订单号, 商品号)，所以无需再补充；分解保持依赖并且无损。\n\n【易错点】写依赖集时漏掉“同一订单中每种商品一个数量”这种需要两个属性联合决定的依赖；判断范式时必须先求出候选码，再看依赖于码的“部分”还是“全部”。",
+   "src": "classic",
+   "frm": [
+    "经典同类题（由语义写函数依赖）",
+    "2017秋B 五、解答题 第1-(1)题",
+    "2020春A 五、解答题 第1题"
+   ]
+  },
+  {
+   "id": "mock2_502",
+   "paper_id": "mock2",
+   "section": "五、解答题（每题10分，共20分）",
+   "number": "2",
+   "qtype": "calc",
+   "points": 10,
+   "chapter": "ch4",
+   "topic_tag": "规范化综合（全主属性、3NF与BCNF）",
+   "difficulty": 3,
+   "context": "已知关系模式 $R(A,\\,B,\\,C,\\,D,\\,E)$，函数依赖集 $F = \\{\\mathrm{AB}\\to C,\\, C\\to D,\\, D\\to E,\\, E\\to A\\}$。",
+   "stem": "(1) 求 R 的所有候选码，并判断其最高规范化程度；（3 分）\n(2) 求 R 的最小函数依赖集 $F_{\\min}$；（2 分）\n(3) 判断分解 $\\rho=\\{\\mathrm{ABC},\\,\\mathrm{CDE}\\}$ 是否具有无损连接性，是否保持函数依赖；（3 分）\n(4) 将 R 分解为满足 3NF 且保持函数依赖的模式集合。（2 分）",
+   "options": [],
+   "correct_options": [],
+   "answer": "**(1)** 候选码为 **AB、BC、BD、BE**；R 的所有属性都是主属性，最高规范化程度为 **3NF**（不满足 BCNF）。\n\n**(2)** $F_{\\min}=F=\\{\\mathrm{AB}\\to C,\\ C\\to D,\\ D\\to E,\\ E\\to A\\}$。\n\n**(3)** 具有无损连接性，**不保持**函数依赖（$E\\to A$ 丢失）。\n\n**(4)** $\\rho=\\{\\mathrm{ABC},\\ \\mathrm{CD},\\ \\mathrm{DE},\\ \\mathrm{EA}\\}$。",
+   "prereq_note": "【0基础前置速通】全主属性的关系模式一定至少是 3NF，但不一定是 BCNF。无损连接用 Chase 表：能让某一行全变成 $a$ 就无损。",
+   "explanation": "【解题思路】\n**(1) 候选码与范式**\n- B 不出现在任何依赖的右部，所以 B 必在每个候选码中；单独的 B 闭包只有 B，需要再补属性；\n- 逐个补一个属性并求闭包：\n  - $(\\mathrm{AB})^+$：AB → C → D → E，得 ABCDE，是候选码；\n  - $(\\mathrm{BC})^+$：C → D → E → A，得 ABCDE，是候选码；\n  - $(\\mathrm{BD})^+$：D → E → A，再由 AB → C，得 ABCDE，是候选码；\n  - $(\\mathrm{BE})^+$：E → A，再 AB → C → D，得 ABCDE，是候选码。\n- 所以候选码为 AB、BC、BD、BE，五个属性都是主属性，**不存在非主属性**，因此至少是 3NF；但 $C\\to D$ 中的决定因素 C 不是候选码，所以不满足 BCNF，最高为 **3NF**。\n\n**(2) 最小函数依赖集**\n右部已经是单属性；$\\mathrm{AB}\\to C$ 的左部 A、B 都不能去掉（$A^+=\\{A\\}$、$B^+=\\{B\\}$ 推不出 C）；每条依赖逐条去掉后都推不出原来的右部，没有冗余依赖，所以 $F_{\\min}=F$。\n\n**(3) 无损与保持依赖**\n初始表：\n\n| | A | B | C | D | E |\n|---|---|---|---|---|---|\n| ABC | $a_1$ | $a_2$ | $a_3$ | $b_{14}$ | $b_{15}$ |\n| CDE | $b_{21}$ | $b_{22}$ | $a_3$ | $a_4$ | $a_5$ |\n\n- $C\\to D$：两行 C 列同为 $a_3$，把 $b_{14}$ 改成 $a_4$；\n- $D\\to E$：此时两行 D 列同为 $a_4$，把 $b_{15}$ 改成 $a_5$；\n- 第 1 行变成全 $a$ → **具有无损连接性**。\n\n保持依赖：$\\mathrm{AB}\\to C$ 落在 ABC，$C\\to D$、$D\\to E$ 落在 CDE，但 $E\\to A$ 的 E 与 A 不在同一个子模式里，且从 E 出发在 CDE 内只能得到 {E}，无法推出 A，所以 **$E\\to A$ 丢失，不保持函数依赖**。\n\n**(4) 3NF 保持依赖分解**\n按 $F_{\\min}$ 的每条依赖构成子模式：ABC、CD、DE、EA；候选码 AB 已包含在 ABC 中，无需补充，得 $\\rho=\\{\\mathrm{ABC},\\mathrm{CD},\\mathrm{DE},\\mathrm{EA}\\}$。\n\n【易错点】(1) 容易漏掉候选码：要把“必含属性 + 逐个补充”的所有可能都算一遍；(3) 无损连接成立不代表依赖也被保持，两个要分开判断。",
+   "src": "adapt",
+   "frm": [
+    "2018春B 五、解答题 第(1)题",
+    "2018春B 五、解答题 第(2)题",
+    "2018春B 五、解答题 第(3)题",
+    "2020春A 五、解答题 第2题"
+   ]
+  },
+  {
+   "id": "mock2_601",
+   "paper_id": "mock2",
+   "section": "六、综合设计题（共15分）",
+   "number": "1",
+   "qtype": "design",
+   "points": 7,
+   "chapter": "ch5",
+   "topic_tag": "E-R概念模型设计",
+   "difficulty": 2,
+   "context": "现设计开发歌手信息管理系统，需对公司、经纪人、歌手和粉丝的信息进行加工处理，其中：\n- 公司信息包括：公司ID、公司名称、地址、电话、网址、注册资产、注册时间；\n- 经纪人信息包括：经纪人ID、姓名、性别、年龄、入职时间；\n- 歌手信息包括：歌手ID、艺名、性别、年龄、唱法；\n- 粉丝信息包括：粉丝ID、昵称、性别、年龄、所属地区。\n业务规则：\n- 一个公司拥有多个经纪人，一个经纪人只属于一个公司；\n- 每个经纪人负责一个歌手，每个歌手只对应一个经纪人，记录起始时间；\n- 一个歌手可以拥有多名粉丝，每名粉丝可以支持多个歌手，记录入坑时间。",
+   "stem": "（1）根据上述描述，设计合理的全局概念结构（E-R图）。",
+   "options": [],
+   "correct_options": [],
+   "answer": "**E-R 图**（矩形：实体；椭圆：属性，下划线为主码；菱形：联系；连线旁为联系类型）\n\n```er\nE 公司 @0,0 | 公司ID* 公司名称 地址 电话 网址 注册资产 注册时间\nR 拥有 @1,0\nE 经纪人 @2,0 | 经纪人ID* 姓名 性别 年龄 入职时间\nR 负责 @2,1 | 起始时间\nE 歌手 @2,2 | 歌手ID* 艺名 性别 年龄 唱法\nR 支持 @1,2 | 入坑时间\nE 粉丝 @0,2 | 粉丝ID* 昵称 性别 年龄 所属地区\nL 公司 1 拥有\nL 拥有 n 经纪人\nL 经纪人 1 负责\nL 负责 1 歌手\nL 歌手 m 支持\nL 支持 n 粉丝\n```\n\n**文字说明**\n\n全局 E-R 图设计如下（实体用矩形表示，属性用椭圆表示且主码加下划线，联系用菱形表示）：\n\n1. 实体及其属性：\n   - [公司]：(<u>公司ID</u>, 公司名称, 地址, 电话, 网址, 注册资产, 注册时间)\n   - [经纪人]：(<u>经纪人ID</u>, 姓名, 性别, 年龄, 入职时间)\n   - [歌手]：(<u>歌手ID</u>, 艺名, 性别, 年龄, 唱法)\n   - [粉丝]：(<u>粉丝ID</u>, 昵称, 性别, 年龄, 所属地区)\n\n2. 联系、基数及联系属性：\n   - [公司] —(1)— <拥有> —(N)— [经纪人]（无联系属性）\n   - [经纪人] —(1)— <负责> —(1)— [歌手]，联系属性：(起始时间)\n   - [歌手] —(M)— <支持> —(N)— [粉丝]，联系属性：(入坑时间)",
+   "prereq_note": "【0基础前置速通】画 E-R 图的“三找”口诀：\n① **找实体**（独立存在的人、物、机构，如公司、经纪人、歌手、粉丝）；\n② **找属性与主码**（把每个实体带的字段标出来，主码加下划线）；\n③ **找联系与基数（1:1、1:N、M:N）**（重点留意“记录XX时间”这类依附于双方交互的字段，它们是**联系属性**，要挂在菱形联系上，而不是挂在单个实体上）。",
+   "explanation": "【分步解析】\n1. 题干明确给出 4 类核心对象：公司、经纪人、歌手、粉丝，分别对应 4 个实体，注意将题干列出的所有属性完整写出并标出主码（公司ID、经纪人ID、歌手ID、粉丝ID）。\n2. 提取业务联系及基数：\n   - “一个公司拥有多个经纪人，一个经纪人只属于一个公司” → 公司与经纪人为 `1:N` 联系“拥有”；\n   - “每个经纪人负责一个歌手，每个歌手只对应一个经纪人，记录起始时间” → 经纪人与歌手为 `1:1` 联系“负责”，带联系属性 `起始时间`；\n   - “一个歌手可以拥有多名粉丝，每名粉丝可以支持多个歌手，记录入坑时间” → 歌手与粉丝为 `M:N` 联系“支持”，带联系属性 `入坑时间`。",
+   "src": "orig",
+   "frm": [
+    "2018春A 六、设计题 第(1)题"
+   ]
+  },
+  {
+   "id": "mock2_602",
+   "paper_id": "mock2",
+   "section": "六、综合设计题（共15分）",
+   "number": "2",
+   "qtype": "design",
+   "points": 8,
+   "chapter": "ch5",
+   "topic_tag": "E-R图向关系模式转换",
+   "difficulty": 2,
+   "context": "现设计开发歌手信息管理系统，需对公司、经纪人、歌手和粉丝的信息进行加工处理，其中：\n- 公司信息包括：公司ID、公司名称、地址、电话、网址、注册资产、注册时间；\n- 经纪人信息包括：经纪人ID、姓名、性别、年龄、入职时间；\n- 歌手信息包括：歌手ID、艺名、性别、年龄、唱法；\n- 粉丝信息包括：粉丝ID、昵称、性别、年龄、所属地区。\n业务规则：\n- 一个公司拥有多个经纪人，一个经纪人只属于一个公司；\n- 每个经纪人负责一个歌手，每个歌手只对应一个经纪人，记录起始时间；\n- 一个歌手可以拥有多名粉丝，每名粉丝可以支持多个歌手，记录入坑时间。",
+   "stem": "（2）设计对应的逻辑结构（关系模式），并标注主、外码。",
+   "options": [],
+   "correct_options": [],
+   "answer": "转换后的关系模式如下（下划线为主码）：\n\n1. 公司（<u>公司ID</u>，公司名称，地址，电话，网址，注册资产，注册时间）\n   - 主码：公司ID；无外码。\n\n2. 经纪人（<u>经纪人ID</u>，姓名，性别，年龄，入职时间，公司ID）\n   - 主码：经纪人ID；\n   - 外码：公司ID（参照 公司.公司ID）。\n\n3. 歌手（<u>歌手ID</u>，艺名，性别，年龄，唱法，经纪人ID，起始时间）\n   - 主码：歌手ID；\n   - 外码：经纪人ID（参照 经纪人.经纪人ID）。\n   （注：由于经纪人与歌手为 1:1 联系，也可将“歌手ID, 起始时间”并入“经纪人”模式中，二选一即可。）\n\n4. 粉丝（<u>粉丝ID</u>，昵称，性别，年龄，所属地区）\n   - 主码：粉丝ID；无外码。\n\n5. 支持（<u>粉丝ID</u>，<u>歌手ID</u>，入坑时间）\n   - 主码：(粉丝ID, 歌手ID)；\n   - 外码：粉丝ID（参照 粉丝.粉丝ID）、歌手ID（参照 歌手.歌手ID）。",
+   "prereq_note": "【0基础前置速通】E-R 图转关系模式三大铁律：\n① **1:1 联系**：可合并到任意一端实体表中，把另一端的主码（作外码）和联系属性一起加入该表；\n② **1:N 联系**：必须合并到 **N 端**实体表中（把 1 端主码作外码 + 联系属性放到 N 端）；\n③ **M:N 联系**：必须独立成一张**新关系表**，其属性由两端实体的主码（共同组成联合主码，同时各自又是外码）以及联系自身属性构成。",
+   "explanation": "【分步解析】\n1. 4 个实体各自先转换为 1 个关系模式，共 4 个基础表。\n2. 处理 3 个联系：\n   - `拥有`（公司 1:N 经纪人）：把 1 端主码 `公司ID` 放入 N 端 `经纪人` 中作外码；\n   - `负责`（经纪人 1:1 歌手，属性 `起始时间`）：并入 `歌手`（或 `经纪人`），加入 `经纪人ID`（外码）和 `起始时间`；\n   - `支持`（粉丝 M:N 歌手，属性 `入坑时间`）：独立建立关系模式 `支持(粉丝ID, 歌手ID, 入坑时间)`，主码为 `(粉丝ID, 歌手ID)`，两列分别为外码。\n3. 【易错点】\n   - 1:1 联系的属性 `起始时间` 要随联系一起并入所选的一端，不能漏掉；\n   - 每个表都要明确写出主码和外码，外码要说明参照哪个表；\n   - 1:1 联系既可并入歌手表，也可并入经纪人表，二选一，但不能两边都放一份。",
+   "src": "orig",
+   "frm": [
+    "2018春A 六、设计题 第(2)题"
+   ]
+  }
+ ]
+}
