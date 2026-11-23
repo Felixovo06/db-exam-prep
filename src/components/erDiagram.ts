@@ -180,7 +180,7 @@ export function renderEr(src: string): string {
   const w = maxX - minX + pad * 2;
   const h = maxY - minY + pad * 2;
   return (
-    `<div class="erdiagram"><svg viewBox="${minX - pad} ${minY - pad} ${w} ${h}" style="width:100%;max-width:${Math.round(w)}px" xmlns="http://www.w3.org/2000/svg" role="img">` +
+    `<div class="erdiagram"><svg viewBox="${minX - pad} ${minY - pad} ${w} ${h}" style="width:100%;max-width:${Math.round(w)}px;--ew:${Math.round(w)}px" xmlns="http://www.w3.org/2000/svg" role="img">` +
     lines.join('') +
     shapes.join('') +
     `</svg></div>`

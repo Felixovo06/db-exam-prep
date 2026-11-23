@@ -452,18 +452,18 @@ export function App() {
       {/* Main Content */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Top Mode Navbar */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 px-4 sm:px-6 py-3">
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 px-3 sm:px-6 py-2 sm:py-3">
           <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0 max-w-full">
               <button
                 type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100"
+                className="lg:hidden shrink-0 p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100"
               >
                 <Menu className="w-5 h-5" />
               </button>
 
-              <div className="inline-flex min-w-0 max-w-full overflow-x-auto rounded-xl bg-slate-100 p-1">
+              <div className="inline-flex min-w-0 max-w-full overflow-x-auto [scrollbar-width:none] rounded-xl bg-slate-100 p-1">
                 <button
                   type="button"
                   onClick={() => setMode('chapter')}
@@ -792,7 +792,7 @@ export function App() {
           )}
         </main>
       </div>
-      <div className="fixed bottom-2 right-3 text-[11px] text-slate-400 bg-white/80 rounded px-2 py-0.5 pointer-events-none">
+      <div className="hidden sm:block fixed bottom-2 right-3 text-[11px] text-slate-400 bg-white/80 rounded px-2 py-0.5 pointer-events-none">
         <span id="busuanzi_container_site_uv" style={{ display: 'none' }}>
           访客 <span id="busuanzi_value_site_uv" />
         </span>

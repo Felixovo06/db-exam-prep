@@ -126,3 +126,9 @@
 .er-small { font-size: 12px; }
 .er-pk { text-decoration: underline; font-weight: 700; }
 .er-card { font-size: 13px; font-weight: 700; fill: #be123c; }
+
+/* 手机：E-R 图保持可读宽度，左右滑动查看 */
+@media (max-width: 640px) {
+  .erdiagram { -webkit-overflow-scrolling: touch; padding: 0.5rem; }
+  .erdiagram svg { width: max(100%, min(var(--ew, 640px), 640px)) !important; max-width: none !important; }
+}
