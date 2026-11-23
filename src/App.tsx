@@ -466,18 +466,6 @@ export function App() {
               <div className="inline-flex min-w-0 max-w-full overflow-x-auto rounded-xl bg-slate-100 p-1">
                 <button
                   type="button"
-                  onClick={() => setMode('feed')}
-                  className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    mode === 'feed'
-                      ? 'bg-white text-indigo-700 shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Newspaper className="w-3.5 h-3.5" />
-                  知识流
-                </button>
-                <button
-                  type="button"
                   onClick={() => setMode('chapter')}
                   className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     mode === 'chapter'
@@ -524,6 +512,18 @@ export function App() {
                   <Sparkles className="w-3.5 h-3.5" />
                   0基础速查
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('feed')}
+                  className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    mode === 'feed'
+                      ? 'bg-white text-indigo-700 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Newspaper className="w-3.5 h-3.5" />
+                  知识流
+                </button>
               </div>
             </div>
 
@@ -557,7 +557,7 @@ export function App() {
         </header>
 
         {/* Body */}
-        <main className="flex-1 px-4 sm:px-6 py-6">
+        <main className={mode === 'feed' ? 'flex-1 min-w-0' : 'flex-1 px-4 sm:px-6 py-6'}>
           {mode === 'feed' ? (
             <KnowledgeFeed
               questions={db.questions}

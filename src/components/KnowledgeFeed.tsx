@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { CheckCircle2, XCircle, Shuffle, EyeOff, Check, ChevronDown, Flame, BookMarked } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { CheckCircle2, XCircle, Shuffle, EyeOff, Check, ChevronDown, ChevronUp, Flame, BookMarked } from 'lucide-react';
 import rawFeed from '../data/feed.json';
 import { MarkdownView } from './MarkdownView';
 import {
@@ -26,7 +26,6 @@ interface FeedCard {
 const CARDS = rawFeed as FeedCard[];
 const KNOWN_KEY = 'db_feed_known_v1';
 const FEED_PAPER_COUNT = 5;
-const BATCH = 12;
 
 type FeedItem = { t: 'k'; card: FeedCard } | { t: 'q'; q: Question };
 type KindFilter = 'all' | 'k' | 'q';
@@ -110,7 +109,9 @@ export function KnowledgeFeed({ questions, papers, progress, onUpdateProgress }:
   const [kind, setKind] = useState<KindFilter>('all');
   const [chapter, setChapter] = useState<ChapterId | 'all'>('all');
   const [hideDone, setHideDone] = useState(false);
-  const [visible, setVisible] = useState(BATCH);
+  const [cur, setCur] = useState(0);
+  const areaRef = useRef<HTMLDivElement | null>(null);
+  const [areaH, setAreaH] = useState(600);
 
   /* 编排信息流：知识卡 → 对应真题 → 随机真题，循环 */
   const feed = useMemo(() => {
@@ -149,24 +150,56 @@ export function KnowledgeFeed({ questions, papers, progress, onUpdateProgress }:
     });
   }, [feed, kind, chapter, hideDone, known, progress]);
 
+  const showOverview = kind === 'all' && chapter === 'all' && !hideDone;
+  const total = items.length + (showOverview ? 1 : 0);
+
+  /* 筛选或洗牌后回到第一屏 */
   useEffect(() => {
-    setVisible(BATCH);
+    setCur(0);
+    areaRef.current?.scrollTo({ top: 0 });
   }, [seed, kind, chapter, hideDone]);
 
-  /* 无限下拉 */
-  const sentinel = useRef<HTMLDivElement | null>(null);
+  /* 滚动区高度 = 视口高度 - 它距顶部的距离 */
   useEffect(() => {
-    const el = sentinel.current;
+    const measure = () => {
+      const el = areaRef.current;
+      if (!el) return;
+      window.scrollTo(0, 0);
+      setAreaH(Math.max(320, window.innerHeight - el.getBoundingClientRect().top));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  /* 当前是第几屏：按滚动位置算 */
+  const onScroll = () => {
+    const el = areaRef.current;
     if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) setVisible((v) => v + BATCH);
-      },
-      { rootMargin: '600px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [items.length]);
+    const i = Math.round(el.scrollTop / el.clientHeight);
+    setCur((c) => (c === i ? c : i));
+  };
+  const go = (i: number) => {
+    const el = areaRef.current;
+    if (!el) return;
+    const t = Math.max(0, Math.min(total - 1, i));
+    el.scrollTo({ top: t * el.clientHeight, behavior: 'instant' as ScrollBehavior });
+  };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 'ArrowDown' || e.key === 'j') {
+        e.preventDefault();
+        go(cur + 1);
+      } else if (e.key === 'ArrowUp' || e.key === 'k') {
+        e.preventDefault();
+        go(cur - 1);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
 
   /* 近 5 套按章节的分值/题量分布 */
   const chStats = useMemo(() => {
@@ -190,172 +223,195 @@ export function KnowledgeFeed({ questions, papers, progress, onUpdateProgress }:
     [related],
   );
 
-  return (
-    <div className="max-w-[1500px] mx-auto">
-      {/* 顶部：考情概览 */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 mb-5">
-        <div className="flex flex-wrap items-center gap-2 mb-1">
-          <BookMarked className="w-4 h-4 text-indigo-600" />
-          <h2 className="text-base font-bold text-slate-900">知识流 · 往下刷就行</h2>
-          <span className="text-xs text-slate-500">
-            {CARDS.length} 张知识卡 + 最近 {feedPapers.length} 套卷共 {recentQs.length} 道真题，穿插着来
+  const overview = (
+    <section className="w-full max-w-3xl rounded-3xl border border-slate-200 bg-white p-5 sm:p-7 shadow-sm">
+      <div className="flex flex-wrap items-center gap-2 mb-1">
+        <BookMarked className="w-5 h-5 text-indigo-600" />
+        <h2 className="text-lg font-bold text-slate-900">知识流 · 往下滑就行</h2>
+      </div>
+      <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+        {CARDS.length} 张知识卡 + 最近 {feedPapers.length} 套卷共 {recentQs.length} 道真题，一屏一个，穿插着来。知识卡整理自 HEU 开源《期末复习干货》，真题来自：
+        {feedPapers.map((p) => `${p.term}${p.variant}`).join('、')}。
+      </p>
+      <div className="text-xs font-semibold text-slate-700 mb-2">近 {feedPapers.length} 套卷各章题量占比</div>
+      <div className="space-y-1.5 mb-4">
+        {chStats.map((st) => (
+          <div key={st.id} className="flex items-center gap-2 text-xs">
+            <span className="w-28 shrink-0 text-slate-600 truncate">{st.name}</span>
+            <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${Math.max(st.pct * 2.5, 3)}%` }} />
+            </div>
+            <span className="w-20 text-right text-slate-500 tabular-nums">
+              {st.n} 题 · {st.pct}%
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="text-xs font-semibold text-slate-700 mb-2 flex items-center gap-1">
+        <Flame className="w-3.5 h-3.5 text-orange-500" />
+        出现在最多套卷里的知识点
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {hot.map(({ c, n, papers: pn }) => (
+          <span
+            key={c.id}
+            className="inline-flex items-center gap-1 rounded-lg border border-orange-200 bg-orange-50 px-2 py-1 text-[11px] text-orange-800"
+          >
+            {c.title.replace(/[★ ]+$/, '')}
+            <b className="text-orange-600">
+              {pn}/{feedPapers.length} 套 · {n} 题
+            </b>
           </span>
-        </div>
-        <p className="text-xs text-slate-500 mb-3">
-          知识卡整理自 HEU 开源《期末复习干货》（SQL 语言 / 大题解题方法 / 选填题知识点）并补充了本站的考情标注；真题来自：
-          {feedPapers.map((p) => `${p.term}${p.variant}`).join('、')}。
-        </p>
+        ))}
+      </div>
+      <div className="mt-5 flex items-center justify-between text-xs text-slate-500">
+        <span>
+          已记住知识卡 <b className="text-slate-800">{known.size}</b>/{CARDS.length} · 已掌握真题{' '}
+          <b className="text-slate-800">{masteredQ}</b>/{recentQs.length}
+        </span>
+        <button
+          type="button"
+          onClick={() => go(1)}
+          className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-indigo-600 text-white font-semibold cursor-pointer hover:bg-indigo-700"
+        >
+          开始刷 <ChevronDown className="w-4 h-4" />
+        </button>
+      </div>
+    </section>
+  );
 
-        <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
-          <div>
-            <div className="text-xs font-semibold text-slate-700 mb-2">近 {feedPapers.length} 套卷各章题量占比</div>
-            <div className="space-y-1.5">
-              {chStats.map((s) => (
-                <div key={s.id} className="flex items-center gap-2 text-xs">
-                  <span className="w-24 shrink-0 text-slate-600 truncate">{s.name}</span>
-                  <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
-                    <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${Math.max(s.pct * 2.2, 3)}%` }} />
-                  </div>
-                  <span className="w-16 text-right text-slate-500 tabular-nums">
-                    {s.n} 题 · {s.pct}%
-                  </span>
+  const slides: ReactNode[] = [];
+  if (showOverview) slides.push(overview);
+  items.forEach((it) => {
+    slides.push(
+      it.t === 'k' ? (
+        <KnowledgeCard
+          key={it.card.id}
+          card={it.card}
+          related={related.get(it.card.id) ?? []}
+          paperMap={paperMap}
+          total={feedPapers.length}
+          isKnown={known.has(it.card.id)}
+          onToggle={() => toggleKnown(it.card.id)}
+        />
+      ) : (
+        <QuestionFeedCard
+          key={it.q.id}
+          q={it.q}
+          paper={paperMap.get(it.q.paper_id)}
+          progress={progress[it.q.id]}
+          onUpdateProgress={onUpdateProgress}
+        />
+      ),
+    );
+  });
+
+  return (
+    <div className="flex flex-col bg-[#F8F7F4]" style={{ height: areaH + 0 }}>
+      {/* 筛选条 */}
+      <div className="shrink-0 px-3 sm:px-5 py-2 border-b border-slate-200 bg-white/90 flex flex-wrap items-center gap-2">
+        <div className="inline-flex rounded-lg bg-slate-100 p-0.5 text-xs font-semibold">
+          {([
+            ['all', '全部'],
+            ['k', '知识卡'],
+            ['q', '真题'],
+          ] as const).map(([k, label]) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setKind(k)}
+              className={`px-3 py-1 rounded-md cursor-pointer ${
+                kind === k ? 'bg-white text-indigo-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <select
+          value={chapter}
+          onChange={(e) => setChapter(e.target.value as ChapterId | 'all')}
+          className="px-2 py-1 rounded-lg border border-slate-200 bg-white text-xs text-slate-700 cursor-pointer"
+        >
+          <option value="all">所有章节</option>
+          {CHAPTERS.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.shortName}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => setHideDone((v) => !v)}
+          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs cursor-pointer ${
+            hideDone ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-white text-slate-600 border-slate-200'
+          }`}
+          title="隐藏已记住的知识卡和已掌握的真题"
+        >
+          <EyeOff className="w-3.5 h-3.5" />
+          隐藏已会的
+        </button>
+        <button
+          type="button"
+          onClick={() => setSeed(Math.floor(Math.random() * 1e9))}
+          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 text-xs font-semibold cursor-pointer hover:bg-indigo-100"
+        >
+          <Shuffle className="w-3.5 h-3.5" />
+          换一批
+        </button>
+        <span className="ml-auto text-xs text-slate-500 tabular-nums">
+          {total > 0 ? `${Math.min(cur + 1, total)} / ${total}` : ''}
+        </span>
+      </div>
+
+      {/* 一屏一条，吸附滚动 */}
+      <div className="relative flex-1 min-h-0">
+        {total === 0 ? (
+          <div className="h-full flex items-center justify-center text-sm text-slate-500">
+            这个筛选下没有内容了——要么都已经会了，要么换个章节试试。
+          </div>
+        ) : (
+          <>
+            <div
+              ref={areaRef}
+              onScroll={onScroll}
+              className="h-full overflow-y-scroll snap-y snap-mandatory"
+              style={{ overscrollBehaviorY: 'contain' }}
+            >
+              {slides.map((node, i) => (
+                <div
+                  key={i}
+                  className="snap-start snap-always h-full w-full flex items-center justify-center px-3 sm:px-16 py-3"
+                >
+                  {Math.abs(i - cur) <= 2 ? (
+                    <div className="feed-slide w-full max-w-3xl max-h-full overflow-y-auto rounded-3xl">{node}</div>
+                  ) : null}
                 </div>
               ))}
             </div>
-          </div>
-          <div>
-            <div className="text-xs font-semibold text-slate-700 mb-2 flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5 text-orange-500" />
-              出现在最多套卷里的知识点
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {hot.map(({ c, n, papers: pn }) => (
-                <span
-                  key={c.id}
-                  className="inline-flex items-center gap-1 rounded-lg border border-orange-200 bg-orange-50 px-2 py-1 text-[11px] text-orange-800"
-                >
-                  {c.title.replace(/[★ ]+$/, '')}
-                  <b className="text-orange-600">
-                    {pn}/{feedPapers.length} 套 · {n} 题
-                  </b>
-                </span>
-              ))}
-            </div>
-            <div className="mt-3 text-xs text-slate-500">
-              已记住知识卡 <b className="text-slate-800">{known.size}</b>/{CARDS.length} · 已掌握真题{' '}
-              <b className="text-slate-800">{masteredQ}</b>/{recentQs.length}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 筛选条 */}
-      <div className="sticky top-0 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 mb-4 bg-[#F8F7F4]/95 backdrop-blur border-b border-slate-200">
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex rounded-lg bg-slate-100 p-0.5 text-xs font-semibold">
-            {([
-              ['all', '全部'],
-              ['k', '知识卡'],
-              ['q', '真题'],
-            ] as const).map(([k, label]) => (
+            {/* 右侧上下翻页（像短视频的侧边按钮） */}
+            <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2">
               <button
-                key={k}
                 type="button"
-                onClick={() => setKind(k)}
-                className={`px-3 py-1 rounded-md cursor-pointer ${
-                  kind === k ? 'bg-white text-indigo-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
+                onClick={() => go(cur - 1)}
+                disabled={cur <= 0}
+                className="w-10 h-10 rounded-full bg-white border border-slate-200 shadow flex items-center justify-center text-slate-700 disabled:opacity-30 cursor-pointer hover:bg-slate-50"
+                title="上一个（↑ 或 k）"
               >
-                {label}
+                <ChevronUp className="w-5 h-5" />
               </button>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-1">
-            <button
-              type="button"
-              onClick={() => setChapter('all')}
-              className={`px-2.5 py-1 rounded-lg border text-xs cursor-pointer ${
-                chapter === 'all'
-                  ? 'bg-slate-900 text-white border-slate-900'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              所有章节
-            </button>
-            {CHAPTERS.map((c) => (
               <button
-                key={c.id}
                 type="button"
-                onClick={() => setChapter(c.id)}
-                className={`px-2.5 py-1 rounded-lg border text-xs cursor-pointer ${
-                  chapter === c.id
-                    ? 'bg-slate-900 text-white border-slate-900'
-                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
-                }`}
+                onClick={() => go(cur + 1)}
+                disabled={cur >= total - 1}
+                className="w-10 h-10 rounded-full bg-indigo-600 text-white shadow flex items-center justify-center disabled:opacity-30 cursor-pointer hover:bg-indigo-700"
+                title="下一个（↓ 或 j）"
               >
-                {c.shortName}
+                <ChevronDown className="w-5 h-5" />
               </button>
-            ))}
-          </div>
-
-          <div className="ml-auto flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setHideDone((v) => !v)}
-              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs cursor-pointer ${
-                hideDone ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-white text-slate-600 border-slate-200'
-              }`}
-              title="隐藏已记住的知识卡和已掌握的真题"
-            >
-              <EyeOff className="w-3.5 h-3.5" />
-              隐藏已会的
-            </button>
-            <button
-              type="button"
-              onClick={() => setSeed(Math.floor(Math.random() * 1e9))}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 text-xs font-semibold cursor-pointer hover:bg-indigo-100"
-            >
-              <Shuffle className="w-3.5 h-3.5" />
-              换一批
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* 瀑布流 */}
-      {items.length === 0 ? (
-        <div className="text-center text-sm text-slate-500 py-16">
-          这个筛选下没有内容了——要么都已经会了，要么换个章节试试。
-        </div>
-      ) : (
-        <div className="columns-1 md:columns-2 2xl:columns-3 gap-4">
-          {items.slice(0, visible).map((it) => (
-            <div key={it.t === 'k' ? it.card.id : it.q.id} className="break-inside-avoid mb-4">
-              {it.t === 'k' ? (
-                <KnowledgeCard
-                  card={it.card}
-                  related={related.get(it.card.id) ?? []}
-                  paperMap={paperMap}
-                  total={feedPapers.length}
-                  isKnown={known.has(it.card.id)}
-                  onToggle={() => toggleKnown(it.card.id)}
-                />
-              ) : (
-                <QuestionFeedCard
-                  q={it.q}
-                  paper={paperMap.get(it.q.paper_id)}
-                  progress={progress[it.q.id]}
-                  onUpdateProgress={onUpdateProgress}
-                />
-              )}
             </div>
-          ))}
-        </div>
-      )}
-
-      <div ref={sentinel} className="h-12 flex items-center justify-center text-xs text-slate-400">
-        {visible < items.length ? '继续往下刷…' : items.length > 0 ? `—— 这一批 ${items.length} 张都刷完了，点上面“换一批”再来 ——` : ''}
+          </>
+        )}
       </div>
     </div>
   );
@@ -382,7 +438,7 @@ function KnowledgeCard({
   const paperCount = new Set(related.map((q) => q.paper_id)).size;
   return (
     <article
-      className={`rounded-2xl border bg-white p-4 shadow-2xs transition-colors ${
+      className={`rounded-3xl border bg-white p-5 sm:p-7 shadow-sm transition-colors ${
         isKnown ? 'border-emerald-300 bg-emerald-50/30' : 'border-slate-200'
       }`}
     >
@@ -397,8 +453,8 @@ function KnowledgeCard({
           </span>
         )}
       </div>
-      <h3 className="text-[15px] font-bold text-slate-900 mb-2">{card.title}</h3>
-      <div className="text-sm leading-relaxed">
+      <h3 className="text-xl font-bold text-slate-900 mb-3">{card.title}</h3>
+      <div className="text-[15px] sm:text-base leading-relaxed">
         <MarkdownView content={card.body} />
       </div>
 
@@ -492,7 +548,7 @@ function QuestionFeedCard({
     status === 'mastered' ? 'border-emerald-300' : status === 'wrong' ? 'border-rose-300' : status === 'fuzzy' ? 'border-amber-300' : 'border-slate-200';
 
   return (
-    <article className={`rounded-2xl border bg-white p-4 shadow-2xs ${border}`}>
+    <article className={`rounded-3xl border bg-white p-5 sm:p-7 shadow-sm ${border}`}>
       <div className="flex flex-wrap items-center gap-1.5 mb-2">
         <span className="px-2 py-0.5 rounded-md bg-slate-800 text-white text-[10px] font-bold">真题</span>
         <span className={`px-2 py-0.5 rounded-md border text-[11px] ${CH_COLOR[q.chapter]}`}>{chShort(q.chapter)}</span>
@@ -509,7 +565,7 @@ function QuestionFeedCard({
           <MarkdownView content={q.context} />
         </div>
       )}
-      <div className="text-sm leading-relaxed text-slate-900">
+      <div className="text-[15px] sm:text-base leading-relaxed text-slate-900">
         <MarkdownView content={q.stem} />
       </div>
 
